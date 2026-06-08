@@ -1,7 +1,5 @@
-
+import home
 import os
-
-
 
 
 def limpar_terminal():
@@ -22,7 +20,7 @@ def ModuloClientes():
             3 - visualizar Cliente
             4 - Visualizar Clientes
             5 - Excluir Cliente
-            6 - Atualizar Cliente
+            6 - Voltar Para O Menu Principal
             =======================
             """)
         print()
@@ -31,22 +29,29 @@ def ModuloClientes():
         limpar_terminal()
 
         if opcao == '1':
+            limpar_terminal()
             CadastrarCliente()
 
         elif opcao == '2':
-            EditarCliente()
+            limpar_terminal()
+            ProcessarCliente(atualizar=True)
 
         elif opcao == '3':
-            BuscarCliente()
+            limpar_terminal()
+            ProcessarCliente()
 
         elif opcao == '4':
+            limpar_terminal()
             VisualizarClientes()
 
         elif opcao == '5':
-            ExcluirCliente()
-
+            limpar_terminal()
+            ProcessarCliente(excluir=True)
+        
         elif opcao == '6':
-            AtualizarCliente()
+            limpar_terminal()
+            home.Home()
+            break
 
 
 
@@ -60,12 +65,7 @@ def CadastrarCliente():
     cpf = input("Digite o CPF do cliente: ")
     saldo_devedor = float(input("Digite o saldo devedor do cliente: "))
 
-    for cliente in clientes:
-        if cliente["cpf"] == cpf:
-            print("Já existe um cliente cadastrado com esse CPF.")
-        
-        else:
-            dicionario_cliente = {
+    dicionario_cliente = {
                 "nome": nome,
                 "email": email,
                 "telefone": telefone,
@@ -73,21 +73,20 @@ def CadastrarCliente():
                 "saldo_devedor": saldo_devedor
             }
 
-            clientes.append(dicionario_cliente)
+    clientes.append(dicionario_cliente)
 
 
-def EditarCliente():
-    pass
-
-def BuscarCliente():
+def ProcessarCliente(excluir=False, atualizar=False):
     while True:
-        print("""
-        =======================
-        De Qual Forma Você Deseja Buscar O Cliente ?
-        1 - Buscar Por Nome
-        2 - Buscar Por CPF
-        3 - Buscar Por Telefone
-        =======================
+        print(f"""
+            =======================
+            De Qual Forma Você Deseja Buscar O Cliente {
+                'para Exclusão' if excluir else 'para Atualização' if atualizar else ''
+            } ?
+            1 - Buscar Por Nome
+            2 - Buscar Por CPF
+            3 - Buscar Por Telefone
+            =======================
         """)
         print()
 
@@ -100,11 +99,43 @@ def BuscarCliente():
                 if cliente["nome"] == nome_cliente:
                     clientes_encontrados.append({"indice": i, "dados": cliente})
 
+
             if clientes_encontrados:
                 print(f"Foram encontrados {len(clientes_encontrados)} Resultados da Buesca")
                 for cliente in clientes_encontrados:
-                    print(f"Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
+                    print(f"ID: {cliente['indice']+1} - Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
                                     
+                if excluir:
+                    print()
+                    id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
+                    if 0 <= id_cliente < len(clientes):
+                        del clientes[id_cliente]
+                        print("Cliente excluído com sucesso!")
+                    else:
+                        print("ID inválido. Nenhum cliente foi excluído.")
+
+                elif atualizar:
+                    print()
+                    id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1
+                    if 0 <= id_cliente < len(clientes):
+                        cliente_atualizar = clientes[id_cliente]
+
+                        print("Digite os novos dados do cliente (deixe em branco para manter o valor atual):")
+                        nome = input(f"Nome ({cliente_atualizar['dados']['nome']}): ") or cliente_atualizar['dados']['nome']
+                        email = input(f"Email ({cliente_atualizar['dados']['email']}): ") or cliente_atualizar['dados']['email']
+                        telefone = input(f"Telefone ({cliente_atualizar['dados']['telefone']}): ") or cliente_atualizar['dados']['telefone']
+                        cpf = input(f"CPF ({cliente_atualizar['dados']['cpf']}): ") or cliente_atualizar['dados']['cpf']
+                        saldo_devedor_input = input(f"Saldo Devedor ({cliente_atualizar['dados']['saldo_devedor']}): ")
+                        saldo_devedor = float(saldo_devedor_input) if saldo_devedor_input else cliente_atualizar['dados']['saldo_devedor']
+
+                        clientes[id_cliente] = {
+                            "nome": nome,
+                            "email": email,
+                            "telefone": telefone,
+                            "cpf": cpf,
+                            "saldo_devedor": saldo_devedor
+                        }
+                        print("Cliente atualizado com sucesso!")
             else:
                 print("Cliente não encontrado.")
             
@@ -113,8 +144,40 @@ def BuscarCliente():
             cpf_cliente = input("Digite o CPF do cliente: ")
             for cliente in clientes:
                 if cliente["cpf"] == cpf_cliente:
-                    print(f"Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
-                    
+                    print(f"ID: {clientes.index(cliente)+1} - Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
+            
+            if excluir:
+                    print()
+                    id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
+                    if 0 <= id_cliente < len(clientes):
+                        del clientes[id_cliente]
+                        print("Cliente excluído com sucesso!")
+                    else:
+                        print("ID inválido. Nenhum cliente foi excluído.")
+
+            elif atualizar:
+                print()
+                id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1
+                if 0 <= id_cliente < len(clientes):
+                    cliente_atualizar = clientes[id_cliente]
+
+                    print("Digite os novos dados do cliente (deixe em branco para manter o valor atual):")
+                    nome = input(f"Nome ({cliente_atualizar['dados']['nome']}): ") or cliente_atualizar['dados']['nome']
+                    email = input(f"Email ({cliente_atualizar['dados']['email']}): ") or cliente_atualizar['dados']['email']
+                    telefone = input(f"Telefone ({cliente_atualizar['dados']['telefone']}): ") or cliente_atualizar['dados']['telefone']
+                    cpf = input(f"CPF ({cliente_atualizar['dados']['cpf']}): ") or cliente_atualizar['dados']['cpf']
+                    saldo_devedor_input = input(f"Saldo Devedor ({cliente_atualizar['dados']['saldo_devedor']}): ")
+                    saldo_devedor = float(saldo_devedor_input) if saldo_devedor_input else cliente_atualizar['dados']['saldo_devedor']
+
+                    clientes[id_cliente] = {
+                        "nome": nome,
+                        "email": email,
+                        "telefone": telefone,
+                        "cpf": cpf,
+                        "saldo_devedor": saldo_devedor
+                    }
+                    print("Cliente atualizado com sucesso!")
+
             else:
                 print("Cliente não encontrado.")
             limpar_terminal()
@@ -124,8 +187,39 @@ def BuscarCliente():
             telefone_cliente = input("Digite o telefone do cliente: ")
             for cliente in clientes:
                 if cliente["telefone"] == telefone_cliente:
-                    print(f"Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
-                
+                    print(f"ID: {clientes.index(cliente)+1} - Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
+            
+            if excluir:
+                    print()
+                    id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
+                    if 0 <= id_cliente < len(clientes):
+                        del clientes[id_cliente]
+                        print("Cliente excluído com sucesso!")
+                    else:
+                        print("ID inválido. Nenhum cliente foi excluído.")
+
+            elif atualizar:
+                print()
+                id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1
+                if 0 <= id_cliente < len(clientes):
+                    cliente_atualizar = clientes[id_cliente]
+                    print("Digite os novos dados do cliente (deixe em branco para manter o valor atual):")
+                    nome = input(f"Nome ({cliente_atualizar['dados']['nome']}): ") or cliente_atualizar['dados']['nome']
+                    email = input(f"Email ({cliente_atualizar['dados']['email']}): ") or cliente_atualizar['dados']['email']
+                    telefone = input(f"Telefone ({cliente_atualizar['dados']['telefone']}): ") or cliente_atualizar['dados']['telefone']
+                    cpf = input(f"CPF ({cliente_atualizar['dados']['cpf']}): ") or cliente_atualizar['dados']['cpf']
+                    saldo_devedor_input = input(f"Saldo Devedor ({cliente_atualizar['dados']['saldo_devedor']}): ")
+                    saldo_devedor = float(saldo_devedor_input) if saldo_devedor_input else cliente_atualizar['dados']['saldo_devedor']
+
+                    clientes[id_cliente] = {
+                        "nome": nome,
+                        "email": email,
+                        "telefone": telefone,
+                        "cpf": cpf,
+                        "saldo_devedor": saldo_devedor
+                    }
+                    print("Cliente atualizado com sucesso!")
+
             else:
                 print("Cliente não encontrado.")
             limpar_terminal()
@@ -133,16 +227,10 @@ def BuscarCliente():
         else:
             print("Opção inválida! Por favor, escolha uma opção válida.")
 
+
 def VisualizarClientes():
     for cliente in clientes:
         print(f"Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
-        print("===============================================")
+        print()
 
-def ExcluirCliente():
-    pass
 
-def AtualizarCliente():
-    pass
-
-CadastrarCliente()
-ExcluirCliente()
