@@ -1,0 +1,23 @@
+[
+    {
+        "nome": "davi",
+        "email": "davi@gmail.com",
+        "telefone": "84 999764073",
+        "cpf": "244",
+        "saldo_devedor": 0.0
+    },
+    {
+        "nome": "eliza",
+        "email": "eliza@eliza",
+        "telefone": "1234",
+        "cpf": "422",
+        "saldo_devedor": 0.0
+    },
+    {
+        "nome": "felipe",
+        "email": "feb",
+        "telefone": "123",
+        "cpf": "15",
+        "saldo_devedor": 90.0
+    }
+]

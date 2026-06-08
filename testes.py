@@ -1,15 +1,7 @@
-excluir = False
-atualizar = False
+import json
 
 
-print(f"""
-            =======================
-            De Qual Forma Você Deseja Buscar O Cliente {
-                'para Exclusão' if excluir else 'para Atualização' if atualizar else ''
-            } ?
-            1 - Buscar Por Nome
-            2 - Buscar Por CPF
-            3 - Buscar Por Telefone
-            =======================
-        """)
-print()
+def salvarClientes(clientes):
+    with open("clientes.json", "w", encoding="utf-8") as arquivo:
+        json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
+

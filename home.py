@@ -37,4 +37,6 @@ def Home():
         else:
             limpar_terminal()
             print("Escolha um modulo ja existente!")
+
+Home()
             

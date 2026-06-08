@@ -1,6 +1,16 @@
 import home
 import os
+import json
+import time
 
+clientes = []
+
+if os.path.exists("clientes.json"):
+    with open("clientes.json", "r", encoding="utf-8") as arquivo:
+        clientes = json.load(arquivo)
+else:
+    with open("clientes.json", "w", encoding="utf-8") as arquivo:
+        json.dump([], arquivo, indent=4, ensure_ascii=False)  
 
 def limpar_terminal():
     # Para Windows
@@ -10,7 +20,7 @@ def limpar_terminal():
     else:
         os.system("clear")
 
-clientes = []
+
 def ModuloClientes():
     while True:
         print("""
@@ -55,14 +65,20 @@ def ModuloClientes():
 
 
 
-
 def CadastrarCliente():
-    dicionario_cliente = {}
-
     nome = input("Digite o nome do cliente: ")
     email = input("Digite o email do cliente: ")
     telefone = input("Digite o telefone do cliente: ")
     cpf = input("Digite o CPF do cliente: ")
+
+    for cliente in clientes:
+        if cliente["cpf"] == cpf:
+            print("CPF já cadastrado. Por favor, insira um CPF diferente.")
+
+            while cliente["cpf"] == cpf:
+                cpf = input("Digite o CPF do cliente: ")
+            
+        
     saldo_devedor = float(input("Digite o saldo devedor do cliente: "))
 
     dicionario_cliente = {
@@ -75,6 +91,10 @@ def CadastrarCliente():
 
     clientes.append(dicionario_cliente)
 
+    with open("clientes.json", "w", encoding="utf-8") as arquivo:
+        json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
+
+
 
 def ProcessarCliente(excluir=False, atualizar=False):
     while True:
@@ -86,23 +106,27 @@ def ProcessarCliente(excluir=False, atualizar=False):
             1 - Buscar Por Nome
             2 - Buscar Por CPF
             3 - Buscar Por Telefone
+            4 - Menu de Clientes
             =======================
         """)
-        print()
 
         Visualizar_cliente = input("Digite a opção desejada: ")
+        limpar_terminal()
 
+        #busca por nome    
         if Visualizar_cliente == '1':
             clientes_encontrados = []
             nome_cliente = input("Digite o nome do cliente: ")
-            for i,cliente in clientes:
-                if cliente["nome"] == nome_cliente:
-                    clientes_encontrados.append({"indice": i, "dados": cliente})
+            limpar_terminal()
 
+            for i, cliente in enumerate(clientes):
+                if clientes[i]["nome"] == nome_cliente:
+                    clientes_encontrados.append({"indice": i, "dados": cliente})
 
             if clientes_encontrados:
                 print(f"Foram encontrados {len(clientes_encontrados)} Resultados da Buesca")
                 for cliente in clientes_encontrados:
+                    print()
                     print(f"ID: {cliente['indice']+1} - Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
                                     
                 if excluir:
@@ -110,9 +134,18 @@ def ProcessarCliente(excluir=False, atualizar=False):
                     id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
                     if 0 <= id_cliente < len(clientes):
                         del clientes[id_cliente]
+
+                        with open("clientes.json", "w", encoding="utf-8") as arquivo:
+                            json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
+
                         print("Cliente excluído com sucesso!")
+                        time.sleep(2)
+                        limpar_terminal()
+
                     else:
                         print("ID inválido. Nenhum cliente foi excluído.")
+                        time.sleep(2)
+                        limpar_terminal()
 
                 elif atualizar:
                     print()
@@ -135,9 +168,18 @@ def ProcessarCliente(excluir=False, atualizar=False):
                             "cpf": cpf,
                             "saldo_devedor": saldo_devedor
                         }
+
+                        with open("clientes.json", "w", encoding="utf-8") as arquivo:
+                            json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
+
                         print("Cliente atualizado com sucesso!")
+                        time.sleep(2)
+                        limpar_terminal()
+
             else:
                 print("Cliente não encontrado.")
+                time.sleep(2)
+                limpar_terminal()
             
 
         elif Visualizar_cliente == '2':
@@ -224,6 +266,9 @@ def ProcessarCliente(excluir=False, atualizar=False):
                 print("Cliente não encontrado.")
             limpar_terminal()
 
+        if Visualizar_cliente == '4':
+            break
+
         else:
             print("Opção inválida! Por favor, escolha uma opção válida.")
 
@@ -234,3 +279,4 @@ def VisualizarClientes():
         print()
 
 
+ModuloClientes()
