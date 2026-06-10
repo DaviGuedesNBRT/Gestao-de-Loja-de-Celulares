@@ -256,20 +256,27 @@ def processarProduto(excluir=False, atualizar=False):
                 break
 
             else:
-                atualizar_produto = int(input("Digite o ID do Produto a Ser Atualizado :"))
+                atualizar_produto= int(input("Digite o ID do Produto a Ser Atualizado :"))-1
                 sleep(0.25)
                 limpar_terminal()
+                print(atualizar_produto)
 
                 if 0<= atualizar_produto < len(produtos):
 
-                    print("Atualizar Produto, Se Não houver Informação Para o Campo, deixe em branco!")
-                    print()
+                    print("Atualizar Produto, se não houver informação para o campo, deixe em branco!\n")
 
-                    nome_produto = input(f"Digite o nome do produto({produtos[atualizar_produto]["nome"]}): ")
-                    marca_produto = input(f"Digite a marca do produto({produtos[atualizar_produto]["marca"]}): ")
-                    preco_produto = float(input(f"Digite o preço do produto({produtos[atualizar_produto]["preco"]}): "))
-                    cor_produto = input(f"Digite a cor do produto({produtos[atualizar_produto]["cor"]}): ")
-                    quantidade_produto = int(input(f"Digite a quantidade do produto{produtos[atualizar_produto]["quantidade"]}: "))
+                    produto = produtos[atualizar_produto]
+
+                    nome_produto = input(f"Digite o nome do produto ({produto['nome']}): ") or produto['nome']
+                    marca_produto = input(f"Digite a marca do produto ({produto['marca']}): ") or produto['marca']
+
+                    preco_input = input(f"Digite o preço do produto ({produto['preco']}): ")
+                    preco_produto = float(preco_input) if preco_input else produto['preco']
+
+                    cor_produto = input(f"Digite a cor do produto ({produto['cor']}): ") or produto['cor']
+
+                    quantidade_input = input(f"Digite a quantidade do produto ({produto['quantidade']}): ")
+                    quantidade_produto = int(quantidade_input) if quantidade_input else produto['quantidade']
 
                     produto = {
                         "nome": nome_produto,

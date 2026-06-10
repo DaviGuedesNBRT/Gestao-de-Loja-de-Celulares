@@ -1,6 +1,7 @@
 import os
 import usuarios
 from estoque import ModuloEstoque
+from time import sleep
 
 
 def limpar_terminal():
@@ -14,6 +15,7 @@ def limpar_terminal():
 
 def Home():
     while True:
+        limpar_terminal()
         print("""
         ======================
         1 - Gerir Clientes
@@ -34,7 +36,10 @@ def Home():
             ModuloEstoque()
 
         elif modulo == '3':
-            pass
+            limpar_terminal()
+            print("Ops! O Modulo Ainda Não Está Fancionando, Mas Em Breve Estará Disponivel!!!")
+            sleep(2)
+            
 
         else:
             limpar_terminal()
