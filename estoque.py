@@ -1,4 +1,3 @@
-from home import limpar_terminal
 from time import sleep
 import os
 import json
@@ -8,10 +7,20 @@ produtos = []
 if os.path.exists("estoque.json"):
     with open("estoque.json", "r", encoding="utf-8") as arquivo:
         produtos = json.load(arquivo)
+
 else:
     with open("estoque.json", "w", encoding="utf-8") as arquivo:
-        json.dump([], arquivo, indent=4, ensure_ascii=False)  
-        produtos = json.load(arquivo)
+        json.dump(produtos, arquivo, indent=4, ensure_ascii=False)  
+
+
+def limpar_terminal():
+    # Para Windows
+    if os.name == "nt":
+        os.system("cls")
+    # Para Linux ou Mac
+    else:
+        os.system("clear")
+
 
 
 def ModuloEstoque():
@@ -21,26 +30,40 @@ def ModuloEstoque():
         1 - Cadastrar Produto
         2 - Atualizar Produto
         3 - Excluir Produto
-        4 - Visualizar Produtos
-        5 - Voltar para o Menu Principal
+        4 - Visualizar Produto
+        5 - Visualizar Produtos
+        6 - Voltar para o Menu Principal
         =======================
         """)
 
         opcao = input("Escolha uma opção: ")
 
         if opcao == '1':
-            pass
+            sleep(0.25)
+            limpar_terminal()
+            salvarProdutos()
 
         elif opcao == '2':
-            pass
+            sleep(0.25)
+            limpar_terminal()
+            processarProduto(atualizar=True)
 
         elif opcao == '3':
-            pass
+            sleep(0.25)
+            limpar_terminal()
+            processarProduto(excluir=True)
 
         elif opcao == '4':
-            pass
+            sleep(0.25)
+            limpar_terminal()
+            processarProduto()
 
         elif opcao == '5':
+            sleep(0.25)
+            limpar_terminal()
+            carregarProdutos()
+
+        elif opcao == '6':
             limpar_terminal()
             break
 
@@ -107,7 +130,7 @@ def carregarProdutos():
             if not encontrado:
                 print("Nenhum Resultado Encontrado Para a Busca!")
 
-            input = ("\nPrecione Enter Para Voltar ao Menu...")
+            sair = input("\nPrecione Enter Para Voltar ao Menu...")
             limpar_terminal()
         
         elif opcao == '2':
@@ -126,7 +149,7 @@ def carregarProdutos():
             if not encontrado:
                 print("Nenhum Resultado Encontrado Para a Busca!")
 
-            input = ("\nPrecione Enter Para Voltar ao Menu...")
+            sair = input("\nPrecione Enter Para Voltar ao Menu...")
             limpar_terminal()
 
 
@@ -146,7 +169,7 @@ def carregarProdutos():
             if not encontrado:
                 print("Nenhum Resultado Encontrado Para a Busca!")
             
-            input = ("\nPrecione Enter Para Voltar ao Menu...")
+            sair = input("\nPrecione Enter Para Voltar ao Menu...")
             limpar_terminal()
 
         
@@ -154,10 +177,120 @@ def carregarProdutos():
             break
         
 
-def preocessarProduto(excluir = False, atualizar = False):
+def processarProduto(excluir=False, atualizar=False):
     while True:
-        nome_produto = input(f"Digite o Nome do Produto Para {
-            'para Exclusão : ' if excluir else 'para Atualização : ' if atualizar else 'Visualizar : '
-        })
+        if excluir:
+            prompt = "Digite o Nome do Produto para Exclusão: "
+        elif atualizar:
+            prompt = "Digite o Nome do Produto para Atualização: "
+        else:
+            prompt = "Digite o Nome do Produto para Visualizar: "
 
-        
+        nome_produto = input(prompt)
+
+        if not excluir and not atualizar:
+            encontrado = False
+            for i, produto in enumerate(produtos):
+                if produtos[i]["nome"] == nome_produto:
+                    print(f"""
+                        ID: {i+1}, Nome: {produto['nome']},
+                        Marca: {produto['marca']}, Preço: R${produto['preco']:.2f},
+                        Cor: {produto['cor']}, Quantidade: {produto['quantidade']}
+                    """)
+                    print("================================================================")
+                    print()
+                    encontrado = True
+
+            if not encontrado:
+                print("Produto Não Encontrado!")
+                sleep(2)
+                limpar_terminal()
+                break
+
+            break
+
+        elif excluir:
+            encontrado = False
+            for i, produto in enumerate(produtos):
+                if produtos[i]["nome"] == nome_produto:
+                    print(f"""
+                        ID: {i+1}, Nome: {produto['nome']},
+                        Marca: {produto['marca']}, Preço: R${produto['preco']:.2f},
+                        Cor: {produto['cor']}, Quantidade: {produto['quantidade']}
+                    """)
+                    print("================================================================")
+                    print()
+                    encontrado = True
+
+            if not encontrado:
+                print("Produto Não Encontrado!")
+                sleep(2)
+                limpar_terminal()
+                break
+
+            else:
+                excluir_produto = int(input("Digite o ID do Produto a Ser excluido :"))
+                produtos.pop(excluir_produto-1)
+
+                with open("estoque.json", "w", encoding="utf-8") as arquivo:
+                    json.dump(produtos, arquivo, indent=4, ensure_ascii=False)  
+                break
+
+        elif atualizar:
+            encontrado = False
+            for i, produto in enumerate(produtos):
+                if produtos[i]["nome"] == nome_produto:
+                    print(f"""
+                        ID: {i+1}, Nome: {produto['nome']},
+                        Marca: {produto['marca']}, Preço: R${produto['preco']:.2f},
+                        Cor: {produto['cor']}, Quantidade: {produto['quantidade']}
+                    """)
+                    print("================================================================")
+                    print()
+                    encontrado = True
+
+            if not encontrado:
+                print("Produto Não Encontrado!")
+                sleep(2)
+                limpar_terminal()
+                break
+
+            else:
+                atualizar_produto = int(input("Digite o ID do Produto a Ser Atualizado :"))
+                sleep(0.25)
+                limpar_terminal()
+
+                if 0<= atualizar_produto < len(produtos):
+
+                    print("Atualizar Produto, Se Não houver Informação Para o Campo, deixe em branco!")
+                    print()
+
+                    nome_produto = input(f"Digite o nome do produto({produtos[atualizar_produto]["nome"]}): ")
+                    marca_produto = input(f"Digite a marca do produto({produtos[atualizar_produto]["marca"]}): ")
+                    preco_produto = float(input(f"Digite o preço do produto({produtos[atualizar_produto]["preco"]}): "))
+                    cor_produto = input(f"Digite a cor do produto({produtos[atualizar_produto]["cor"]}): ")
+                    quantidade_produto = int(input(f"Digite a quantidade do produto{produtos[atualizar_produto]["quantidade"]}: "))
+
+                    produto = {
+                        "nome": nome_produto,
+                        "marca": marca_produto,
+                        "preco": preco_produto,
+                        "cor": cor_produto,
+                        "quantidade": quantidade_produto
+                    }
+
+                    produtos[atualizar_produto] = produto
+                    with open("estoque.json", "w", encoding="utf-8") as arquivo:
+                        json.dump(produtos, arquivo, indent=4, ensure_ascii=False)
+                
+                print("Produto Atualizado Com Sucesso!")
+                sleep(1)
+                limpar_terminal()
+                break
+
+
+
+            
+
+                
+

@@ -1,0 +1,16 @@
+[
+    {
+        "nome": "iphone",
+        "marca": "apple",
+        "preco": 5700.0,
+        "cor": "preto",
+        "quantidade": 5
+    },
+    {
+        "nome": "s25",
+        "marca": "sansung",
+        "preco": 3899.0,
+        "cor": "prata",
+        "quantidade": 6
+    }
+]
