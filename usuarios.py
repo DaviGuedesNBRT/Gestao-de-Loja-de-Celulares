@@ -69,7 +69,7 @@ def CadastrarCliente():
     telefone = input("Digite o telefone do cliente: ")
     cpf = input("Digite o CPF do cliente: ")
 
-    for cliente in clientes:
+    for i, cliente in enumerate(clientes):
         if cliente["cpf"] == cpf:
             print("CPF já cadastrado. Por favor, insira um CPF diferente.")
 
@@ -312,4 +312,7 @@ def VisualizarClientes():
     for cliente in clientes:
         print(f"Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
         print()
+        
+    input = ("\nPrecione Enter Para Voltar ao Menu...")
+    limpar_terminal()
 

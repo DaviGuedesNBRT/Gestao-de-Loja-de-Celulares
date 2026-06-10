@@ -1,5 +1,6 @@
 import os
 import usuarios
+from estoque import ModuloEstoque
 
 
 def limpar_terminal():
@@ -29,7 +30,8 @@ def Home():
             
 
         elif modulo == '2':
-            pass
+            limpar_terminal()
+            ModuloEstoque()
 
         elif modulo == '3':
             pass
