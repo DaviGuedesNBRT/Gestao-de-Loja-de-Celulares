@@ -1,1 +1,9 @@
-[]
+[
+    {
+        "nome": "joao",
+        "email": "hanani",
+        "telefone": "6767",
+        "cpf": "67",
+        "saldo_devedor": 100.0
+    }
+]

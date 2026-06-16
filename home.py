@@ -17,11 +17,11 @@ def Home():
     while True:
         limpar_terminal()
         print("""
-        ======================
+        =========-HOME-=========
         1 - Gerir Clientes
         2 - Gerir Estoque
         3 - Gerir Vendas
-        =======================
+        ========================
         """)
 
         modulo = input("qual modulo você deseja acessar ? :")

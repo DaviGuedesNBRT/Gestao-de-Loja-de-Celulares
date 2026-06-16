@@ -156,7 +156,10 @@ def ProcessarCliente(excluir=False, atualizar=False):
                         email = input(f"Email ({cliente_atualizar['email']}): ") or cliente_atualizar['email']
                         telefone = input(f"Telefone ({cliente_atualizar['telefone']}): ") or cliente_atualizar['telefone']
                         cpf = input(f"CPF ({cliente_atualizar['cpf']}): ") or cliente_atualizar['cpf']
+
                         saldo_devedor_input = input(f"Saldo Devedor ({cliente_atualizar['saldo_devedor']}): ")
+
+                        #olahar depoies
                         saldo_devedor = float(saldo_devedor_input) if saldo_devedor_input else cliente_atualizar['saldo_devedor']
 
                         clientes[id_cliente] = {
@@ -185,11 +188,9 @@ def ProcessarCliente(excluir=False, atualizar=False):
             limpar_terminal()
 
             for i,cliente in enumerate(clientes):
-                if cliente["cpf"] == cpf_cliente:
+                if clientes[i]["cpf"] == cpf_cliente:
                     print(f"ID: {i+1} - Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
             
-                
-
             if excluir:
                     print()
                     id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
@@ -207,8 +208,7 @@ def ProcessarCliente(excluir=False, atualizar=False):
 
 
             if atualizar:
-                print()
-                id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1
+                id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1 
                 if 0 <= id_cliente < len(clientes):
                     cliente_atualizar = clientes[id_cliente]
 
@@ -243,7 +243,7 @@ def ProcessarCliente(excluir=False, atualizar=False):
             limpar_terminal()
 
             for i,cliente in enumerate(clientes):
-                if cliente["telefone"] == telefone_cliente:
+                if clientes[i]["telefone"] == telefone_cliente:
                     print(f"ID: {i+1} - Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
             
             if excluir:
@@ -312,7 +312,7 @@ def VisualizarClientes():
     for cliente in clientes:
         print(f"Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
         print()
-        
-    input = ("\nPrecione Enter Para Voltar ao Menu...")
+
+    a =input("\nPrecione Enter Para Voltar ao Menu...")
     limpar_terminal()
 
