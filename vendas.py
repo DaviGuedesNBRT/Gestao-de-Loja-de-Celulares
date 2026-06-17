@@ -1,92 +1,75 @@
 import json 
+from ultils import limpar_terminal, atualizar_arquivos
 from time import sleep
 import os
 import usuarios
-from datetime import datetime
+from datetime import date
 
 vendas = []
 clientes = []
 produtos = []
 
-def limpar_terminal():
-    # Para Windows
-    if os.name == "nt":
-        os.system("cls")
-    # Para Linux ou Mac
-    else:
-        os.system("clear")
 
+with open("estoque.json", "r", encoding="utf-8") as arquivo:
+    produtos = json.load(arquivo)
 
+with open("clientes.json", "r", encoding="utf-8") as arquivo:
+    clientes = json.load(arquivo)
 
-if os.path.exists("estoque.json"):
-    with open("estoque.json", "r", encoding="utf-8") as arquivo:
-        produtos = json.load(arquivo)
-
-else:
-    with open("estoque.json", "w", encoding="utf-8") as arquivo:
-        json.dump(produtos, arquivo, indent=4, ensure_ascii=False)  
-
-
-if os.path.exists("clientes.json"):
-    with open("clientes.json", "r", encoding="utf-8") as arquivo:
-        clientes = json.load(arquivo)
-
-else:
-    with open("clientes.json", "w", encoding="utf-8") as arquivo:
-        json.dump([], arquivo, indent=4, ensure_ascii=False)  
-
-
-if os.path.exists("vendas.json"):
-    with open("vendas.json", "r", encoding="utf-8") as arquivo:
-        vendas = json.load(arquivo)
-
-else:
+if not os.path.exists("vendas.json"):
     with open("vendas.json", "w", encoding="utf-8") as arquivo:
         json.dump([], arquivo, indent=4, ensure_ascii=False)  
-
+else:
+    with open("vendas.json", "r", encoding="utf-8") as arquivo:
+        vendas = json.load(arquivo)
 
 
 def ModuloVendas():
     while True:
         print('''
-            ====================
-            1 - Efetuar Venda
-            2 - Visualizar vendas
-            3 - Voltar Para Home
-            =====================
+    ============================
+        1 - Efetuar Venda
+        2 - Visualizar vendas
+        3 - Voltar Para Home
+    ============================
             ''')
             
         opcao = input("Qual Opção Você Deseja acessar ? : ")
+        limpar_terminal(0.1)
 
         if opcao == '1':
-            pass
+            efetuarVenda()
 
         elif opcao == '2':
             pass
 
         elif opcao == '3':
-            sleep(1)
-            limpar_terminal()
             break
         
         else:
             print('opção invalida!!')
+            limpar_terminal(1)
 
 
 def efetuarVenda():
-    while True:
-        cpf_venda = input('CPF Do Comprador :')
-        cpf_encontrado = False
+    global clientes
+    global produtos
+    global vendas
 
-        for i,clientes in enumerate(clientes):
-            if cpf_venda == clientes[i]["cpf"]:
+    venda_realizada = False
+    while not venda_realizada:
+        cpf_venda = input('CPF Do Comprador :').strip()
+        cpf_encontrado = False
+        
+
+        for i,cliente in enumerate(clientes):
+            if cpf_venda == str(clientes[i]["cpf"]).strip():
                 cpf_encontrado = True
         
-        if not cpf_venda:
+        if not cpf_encontrado:
             print('CPF não encontrado, por favor cadastre-o!')
-            sleep(2)
-            limpar_terminal()
-            usuarios.CadastrarCliente()
+            limpar_terminal(2)
+            cpf_venda = usuarios.CadastrarCliente()
 
         produtos_vendidos = []
         valor_venda = 0
@@ -102,114 +85,122 @@ def efetuarVenda():
 
             encontrado = False
             for i, produto in enumerate(produtos):
-                if produtos[i]["nome"] == nome_produto:
+                if nome_produto in produtos[i]["nome"]:
                     print(f"""
-                        ID: {i+1}, Nome: {produto['nome']},
-                        Marca: {produto['marca']}, Preço: R${produto['preco']:.2f},
-                        Cor: {produto['cor']}
+            ID: {i+1}, Nome: {produto['nome']},
+            Marca: {produto['marca']}, Preço: R${produto['preco']:.2f},
+            Cor: {produto['cor']}, Quantidade: {produto["quantidade"]}
+            ================================================================
                     """)
-                    print("================================================================")
                     print()
                     encontrado = True
 
-                    venda = int(input("infome o ID do produto a ser vendido"))
+            if encontrado:
+                venda_id = int(input("infome o ID do produto a ser vendido"))
+                quantidade = int(input("informe a quantidade de produtos : "))
+
+                while produto["quantidade"] < quantidade:
+                    limpar_terminal(0.25)
+                    print("a quantidade de produtos da venda execeu o estoque!")
+                    limpar_terminal(0.5)
+                    print(f"por favor, efetue uma venda com no maximo {produtos[venda_id-1]["quantidade"]}")
+
                     quantidade = int(input("informe a quantidade de produtos : "))
+                    limpar_terminal(0.25)
 
-                    while produtos[i][quantidade] < quantidade:
-                        print("a quantidade de produtos da venda execeu o estoque!")
-                        sleep(0.3)
-                        print(f"por favor, efetue uma venda com no maximo {produtos[i][quantidade]}")
+                produtos[venda_id-1]["quantidade"] - quantidade
 
-                        quantidade = int(input("informe a quantidade de produtos : "))
+                produtos_comprados = produtos[venda_id-1].copy()
+                produtos_comprados["quantidade"] = quantidade
 
-                    produtos[venda]["quantidade" - quantidade ]
-                    produtos_vendidos.append(produtos[venda-1])
-                    valor_venda += produtos[venda]["valor"]*quantidade
-                    sleep(0.3)
-                    limpar_terminal()
+                produtos_vendidos.append(produtos_comprados)
+                valor_venda += produtos[venda_id-1]["preco"]*quantidade
 
-                    break
+                limpar_terminal(0.3)
 
-            if not encontrado:
+                atualizar_arquivos(produtos=produtos)
+
+            else:
                 print("Produto Não Encontrado!")
-                sleep(1)
-                limpar_terminal()
+                limpar_terminal(1)
 
-        while True:
-                
+        while not venda_realizada:               
             print("""
-                ====-FORMAS DE PAGAMENTO-====
-                1 - pix
-                2 - A vista(Éspecie)
-                3 - A Vista(Cartão)
-                4 - Parcelado
-                5 - A prazo
-                =============================
-    """)
+        ====-FORMAS DE PAGAMENTO-====
+            1 - pix
+            2 - A vista(Éspecie)
+            3 - A Vista(Cartão)
+            4 - Parcelado
+            5 - A prazo
+        =============================
+                """)
+            
             forma_pagamento = input("Infome o metodo de pagamento : ")   
+            hoje = date.today().isoformat()
+
             if forma_pagamento == '1':
                 venda = {"cpf_cliente":cpf_venda, "valor_venda": valor_venda,
-                         "forma_pagamento" : "Pix",
+                         "forma_pagamento" : "Pix", "data" : hoje,
                          "produtos_vendidos": produtos_vendidos
                          }
                 
                 vendas.append(venda)
-                with open("vendas.json", "r", encoding="utf-8") as arquivo:
-                    vendas = json.load(arquivo)
-
+                venda_realizada = True
 
             elif forma_pagamento == '2':
                 venda = {"cpf_cliente":cpf_venda, "valor_venda": valor_venda,
-                         "forma_pagamento" : "A Vista(Éspecie)",
+                         "forma_pagamento" : "A Vista(Éspecie)", "data" : hoje,
                          "produtos_vendidos": produtos_vendidos
                          }
                 
                 vendas.append(venda)
-                with open("vendas.json", "r", encoding="utf-8") as arquivo:
-                    vendas = json.load(arquivo)
-
+                venda_realizada = True
 
             elif forma_pagamento == '3':
                 venda = {"cpf_cliente":cpf_venda, "valor_venda": valor_venda,
-                         "forma_pagamento" : "A Vista(cartão)",
+                         "forma_pagamento" : "A Vista(cartão)", "data" : hoje,
                          "produtos_vendidos": produtos_vendidos
-                         }
-                
+                         }                
                 vendas.append(venda)
-                with open("vendas.json", "r", encoding="utf-8") as arquivo:
-                    vendas = json.load(arquivo)
-
+                venda_realizada = True
 
             elif forma_pagamento == '4':
                 venda = {"cpf_cliente":cpf_venda, "valor_venda": valor_venda,
-                         "forma_pagamento" : "Parcelado",
+                         "forma_pagamento" : "Parcelado", "data" : hoje,
                          "produtos_vendidos": produtos_vendidos
-                         }
-                
+                         }                
                 vendas.append(venda)
-                with open("vendas.json", "r", encoding="utf-8") as arquivo:
-                    vendas = json.load(arquivo)
-
+                venda_realizada = True
 
             elif forma_pagamento == '5':
                 venda = {"cpf_cliente":cpf_venda, "valor_venda": valor_venda,
-                         "forma_pagamento" : "A Prazo",
+                         "forma_pagamento" : "A Prazo", "data" : hoje,
                          "produtos_vendidos": produtos_vendidos
                          }
                 
-                for i in enumerate(clientes):
+                for i ,cliente in enumerate(clientes):
                     if cpf_venda == clientes[i]["cpf"]:
-                        pass
+                        clientes[i]["saldo_devedor"] += float(valor_venda)
+                        atualizar_arquivos(clientes=clientes)
+
+                        print(f"Saldo devedor do cliente :{clientes[i]["nome"]} foi atualizado para : {clientes[i]["saldo_devedor"]}")
+                        limpar_terminal(1)
 
                 vendas.append(venda)
-                with open("vendas.json", "r", encoding="utf-8") as arquivo:
-                    vendas = json.load(arquivo)
-
+                venda_realizada = True
             else :
                 print("opção invalida!")
                 sleep(0.3)
                 limpar_terminal()
-        pass
+
+            #atualiza todos os arquivos de uma vez
+            atualizar_arquivos(produtos=produtos, vendas=vendas, clientes=clientes)
+            
+            print("venda realizada com sucesso!")
+            sleep(10)
+            sair = input("pressione enter para sair")
+
+
 
 def visualizarVendas():
     pass

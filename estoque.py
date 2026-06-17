@@ -1,30 +1,21 @@
 from time import sleep
+from ultils import limpar_terminal, atualizar_arquivos
 import os
 import json
 
 produtos = []
 
-if os.path.exists("estoque.json"):
+if not os.path.exists("estoque.json"):
+    with open("estoque.json", "w", encoding="utf-8") as arquivo:
+        json.dump([], arquivo, indent=4, ensure_ascii=False)  
+else:
     with open("estoque.json", "r", encoding="utf-8") as arquivo:
         produtos = json.load(arquivo)
-
-else:
-    with open("estoque.json", "w", encoding="utf-8") as arquivo:
-        json.dump(produtos, arquivo, indent=4, ensure_ascii=False)  
-
-
-def limpar_terminal():
-    # Para Windows
-    if os.name == "nt":
-        os.system("cls")
-    # Para Linux ou Mac
-    else:
-        os.system("clear")
-
 
 
 def ModuloEstoque():
     while True:
+        limpar_terminal()
         print("""
         ======================
         1 - Cadastrar Produto

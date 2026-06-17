@@ -1,16 +1,23 @@
 [
     {
-        "nome": "iphone 17",
-        "marca": "apple",
-        "preco": 5700.0,
+        "nome": "a07",
+        "marca": "sansumg",
+        "preco": 789.0,
         "cor": "preto",
-        "quantidade": 5
+        "quantidade": 12
+    },
+    {
+        "nome": "iphone 13",
+        "marca": "apple",
+        "preco": 2479.0,
+        "cor": "azul",
+        "quantidade": 7
     },
     {
         "nome": "s25",
         "marca": "sansung",
         "preco": 3899.0,
-        "cor": "prata",
-        "quantidade": 6
+        "cor": "cinza",
+        "quantidade": 16
     }
 ]

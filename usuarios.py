@@ -1,23 +1,18 @@
 import os
 import json
 import time
+from ultils import limpar_terminal, atualizar_arquivos
+
 
 clientes = []
 
-if os.path.exists("clientes.json"):
-    with open("clientes.json", "r", encoding="utf-8") as arquivo:
-        clientes = json.load(arquivo)
-else:
+if not os.path.exists("clientes.json"):
     with open("clientes.json", "w", encoding="utf-8") as arquivo:
         json.dump([], arquivo, indent=4, ensure_ascii=False)  
+else:
+    with open("clientes.json", "r", encoding="utf-8") as arquivo:
+        clientes = json.load(arquivo)
 
-def limpar_terminal():
-    # Para Windows
-    if os.name == "nt":
-        os.system("cls")
-    # Para Linux ou Mac
-    else:
-        os.system("clear")
 
 
 def ModuloClientes():
@@ -64,9 +59,6 @@ def ModuloClientes():
 
 
 def CadastrarCliente():
-    nome = input("Digite o nome do cliente: ")
-    email = input("Digite o email do cliente: ")
-    telefone = input("Digite o telefone do cliente: ")
     cpf = input("Digite o CPF do cliente: ")
 
     for i, cliente in enumerate(clientes):
@@ -75,8 +67,10 @@ def CadastrarCliente():
 
             while cliente["cpf"] == cpf:
                 cpf = input("Digite o CPF do cliente: ")
-            
-        
+
+    nome = input("Digite o nome do cliente: ")
+    email = input("Digite o email do cliente: ")
+    telefone = input("Digite o telefone do cliente: ")        
     saldo_devedor = float(input("Digite o saldo devedor do cliente: "))
 
     dicionario_cliente = {
@@ -92,6 +86,7 @@ def CadastrarCliente():
     with open("clientes.json", "w", encoding="utf-8") as arquivo:
         json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
 
+    return cpf
 
 
 def ProcessarCliente(excluir=False, atualizar=False):

@@ -1,9 +1,30 @@
 [
     {
-        "nome": "joao",
-        "email": "hanani",
-        "telefone": "6767",
+        "nome": "ciro gomes",
+        "email": "ciro",
+        "telefone": "12",
+        "cpf": "12",
+        "saldo_devedor": 0.0
+    },
+    {
+        "nome": "lula",
+        "email": "lula",
+        "telefone": "13",
+        "cpf": "13",
+        "saldo_devedor": 0.0
+    },
+    {
+        "nome": "bolsonaro",
+        "email": "bolsonaro",
+        "telefone": "22",
+        "cpf": "22",
+        "saldo_devedor": 4958.0
+    },
+    {
+        "nome": "hanani",
+        "email": "ha",
+        "telefone": "67",
         "cpf": "67",
-        "saldo_devedor": 100.0
+        "saldo_devedor": 0.0
     }
 ]

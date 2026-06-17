@@ -1,0 +1,17 @@
+[
+    {
+        "cpf_cliente": "22",
+        "valor_venda": 4958.0,
+        "forma_pagamento": "A Prazo",
+        "data": "2026-06-17",
+        "produtos_vendidos": [
+            {
+                "nome": "iphone 13",
+                "marca": "apple",
+                "preco": 2479.0,
+                "cor": "azul",
+                "quantidade": 2
+            }
+        ]
+    }
+]
