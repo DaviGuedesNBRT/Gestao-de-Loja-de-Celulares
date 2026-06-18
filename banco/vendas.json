@@ -1,0 +1,34 @@
+{
+    "1": {
+        "cpf_cliente": "123.456.789-00",
+        "valor_venda": 7499.00,
+        "forma_pagamento": "Pix",
+        "data": "2026-06-15",
+        "produtos_vendidos": [
+            {
+                "nome": "iPhone 15 Pro Max",
+                "marca": "Apple",
+                "armazenamento": "256GB",
+                "preco": 7499.00,
+                "cor": "Titânio Natural",
+                "quantidade": 1
+            }
+        ]
+    },
+    "2": {
+        "cpf_cliente": "987.654.321-11",
+        "valor_venda": 3998.00,
+        "forma_pagamento": "A Vista (Cartão)",
+        "data": "2026-06-17",
+        "produtos_vendidos": [
+            {
+                "nome": "Redmi Note 13 Pro",
+                "marca": "Xiaomi",
+                "armazenamento": "256GB",
+                "preco": 1999.00,
+                "cor": "Azul Estelar",
+                "quantidade": 2
+            }
+        ]
+    }
+}

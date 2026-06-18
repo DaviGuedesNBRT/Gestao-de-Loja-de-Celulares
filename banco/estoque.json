@@ -1,0 +1,42 @@
+{
+    "1": {
+        "nome": "iPhone 15 Pro Max",
+        "marca": "Apple",
+        "armazenamento": "256GB",
+        "preco": 7499.00,
+        "cor": "Titânio Natural",
+        "quantidade": 8
+    },
+    "2": {
+        "nome": "Galaxy S24 Ultra",
+        "marca": "Samsung",
+        "armazenamento": "512GB",
+        "preco": 6899.90,
+        "cor": "Preto Titânio",
+        "quantidade": 12
+    },
+    "3": {
+        "nome": "Redmi Note 13 Pro",
+        "marca": "Xiaomi",
+        "armazenamento": "256GB",
+        "preco": 1999.00,
+        "cor": "Azul Estelar",
+        "quantidade": 20
+    },
+    "4": {
+        "nome": "Moto G84",
+        "marca": "Motorola",
+        "armazenamento": "256GB",
+        "preco": 1499.00,
+        "cor": "Grafite",
+        "quantidade": 0
+    },
+    "5": {
+        "nome": "iPhone 13",
+        "marca": "Apple",
+        "armazenamento": "128GB",
+        "preco": 3899.00,
+        "cor": "Estelar",
+        "quantidade": 5
+    }
+}

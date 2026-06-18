@@ -1,9 +1,10 @@
 from usuarios import ModuloClientes
-from ultils import limpar_terminal
+from ultils import limpar_terminal, CriarArquivos
 from estoque import ModuloEstoque
 from vendas import ModuloVendas
 from time import sleep
 
+CriarArquivos()
 
 def Home():
     while True:

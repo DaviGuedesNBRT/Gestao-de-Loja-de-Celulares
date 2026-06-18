@@ -1,0 +1,30 @@
+{
+    "1": {
+        "nome": "Carlos Eduardo Silva",
+        "email": "cadu.silva@email.com",
+        "telefone": "11999998888",
+        "cpf": "123.456.789-00",
+        "saldo_devedor": 0.0
+    },
+    "2": {
+        "nome": "Mariana Costa Souza",
+        "email": "mari.costa@email.com",
+        "telefone": "21988887777",
+        "cpf": "987.654.321-11",
+        "saldo_devedor": 2500.0
+    },
+    "3": {
+        "nome": "Roberto Alves Pereira",
+        "email": "roberto.alves@email.com",
+        "telefone": "81977776666",
+        "cpf": "456.789.123-22",
+        "saldo_devedor": 0.0
+    },
+    "4": {
+        "nome": "lula",
+        "email": "lula13@gmail.com",
+        "telefone": "113",
+        "cpf": "13",
+        "saldo_devedor": 0.0
+    }
+}

@@ -3,16 +3,16 @@ import json
 import time
 from ultils import limpar_terminal, atualizar_arquivos
 
+clientes = {}
+contador_completo = {}
+id_cliente = 0
 
-clientes = []
+with open("banco/clientes.json", "r", encoding="utf-8") as arquivo:
+    clientes = json.load(arquivo)
 
-if not os.path.exists("clientes.json"):
-    with open("clientes.json", "w", encoding="utf-8") as arquivo:
-        json.dump([], arquivo, indent=4, ensure_ascii=False)  
-else:
-    with open("clientes.json", "r", encoding="utf-8") as arquivo:
-        clientes = json.load(arquivo)
-
+with open("banco/contador.json", "r", encoding="utf-8") as arquivo:
+    contador_completo = json.load(arquivo)
+    id_cliente = contador_completo["cont_clientes"]
 
 
 def ModuloClientes():
@@ -57,39 +57,51 @@ def ModuloClientes():
             break
 
 
-
 def CadastrarCliente():
+    global id_cliente, clientes, contador_completo 
+    
     cpf = input("Digite o CPF do cliente: ")
-
-    for i, cliente in enumerate(clientes):
-        if cliente["cpf"] == cpf:
+    while True:
+        cpf_existe = False
+        for i, dados_cliente in clientes.items():
+            if dados_cliente["cpf"] == cpf:
+                cpf_existe = True
+                break
+        
+        if cpf_existe:
             print("CPF já cadastrado. Por favor, insira um CPF diferente.")
-
-            while cliente["cpf"] == cpf:
-                cpf = input("Digite o CPF do cliente: ")
+            cpf = input("Digite o CPF do cliente: ")
+        else:
+            break
 
     nome = input("Digite o nome do cliente: ")
     email = input("Digite o email do cliente: ")
     telefone = input("Digite o telefone do cliente: ")        
-    saldo_devedor = float(input("Digite o saldo devedor do cliente: "))
+    saldo_devedor = 0.0
+    compras_feitas = 0
+    
+    id_cliente += 1 
+    dados = {
+        "nome": nome,
+        "email": email,
+        "telefone": telefone,
+        "cpf": cpf,
+        "compras": compras_feitas,
+        "saldo_devedor": saldo_devedor,
+        "habilitado": True,
+        }
 
-    dicionario_cliente = {
-                "nome": nome,
-                "email": email,
-                "telefone": telefone,
-                "cpf": cpf,
-                "saldo_devedor": saldo_devedor
-            }
+    clientes[str(id_cliente)] = dados
+    contador_completo["cont_clientes"] = id_cliente
 
-    clientes.append(dicionario_cliente)
-
-    with open("clientes.json", "w", encoding="utf-8") as arquivo:
-        json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-
+    atualizar_arquivos(clientes=clientes, contador=contador_completo)
+    print("Cliente cadastrado com sucesso!")
+    limpar_terminal(1)
     return cpf
 
-
 def ProcessarCliente(excluir=False, atualizar=False):
+    global clientes  
+    
     while True:
         print(f"""
             =======================
@@ -103,211 +115,105 @@ def ProcessarCliente(excluir=False, atualizar=False):
             =======================
         """)
 
-        Visualizar_cliente = input("Digite a opção desejada: ")
+        visualizar_cliente = input("Digite a opção desejada: ")
         limpar_terminal()
 
-        #busca por nome    
-        if Visualizar_cliente == '1':
-            clientes_encontrados = []
-            nome_cliente = input("Digite o nome do cliente: ")
-            limpar_terminal()
-
-            for i, cliente in enumerate(clientes):
-                if clientes[i]["nome"] == nome_cliente:
-                    clientes_encontrados.append({"indice": i, "dados": cliente})
-
-            if clientes_encontrados:
-                print(f"Foram encontrados {len(clientes_encontrados)} Resultados da Buesca")
-                for cliente in clientes_encontrados:
-                    print()
-                    print(f"ID: {cliente['indice']+1} - Nome: {cliente['dados']['nome']}- Email: {cliente['dados']['email']} -Telefone: {cliente['dados']['telefone']} -CPF: {cliente['dados']['cpf']} -Saldo Devedor: {cliente['dados']['saldo_devedor']}")
-                                    
-                if excluir:
-                    print()
-                    id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
-                    if 0 <= id_cliente < len(clientes):
-                        del clientes[id_cliente]
-
-                        with open("clientes.json", "w", encoding="utf-8") as arquivo:
-                            json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-
-                        print("Cliente excluído com sucesso!")
-                        time.sleep(1)
-                        limpar_terminal()
-
-                    else:
-                        print("ID inválido. Nenhum cliente foi excluído.")
-                        time.sleep(1)
-                        limpar_terminal()
-
-                elif atualizar:
-                    print()
-                    id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1
-                    if 0 <= id_cliente < len(clientes):
-                        cliente_atualizar = clientes[id_cliente]
-
-                        print("Digite os novos dados do cliente (deixe em branco para manter o valor atual):")
-                        nome = input(f"Nome ({cliente_atualizar['nome']}): ") or cliente_atualizar['nome']
-                        email = input(f"Email ({cliente_atualizar['email']}): ") or cliente_atualizar['email']
-                        telefone = input(f"Telefone ({cliente_atualizar['telefone']}): ") or cliente_atualizar['telefone']
-                        cpf = input(f"CPF ({cliente_atualizar['cpf']}): ") or cliente_atualizar['cpf']
-
-                        saldo_devedor_input = input(f"Saldo Devedor ({cliente_atualizar['saldo_devedor']}): ")
-
-                        #olahar depoies
-                        saldo_devedor = float(saldo_devedor_input) if saldo_devedor_input else cliente_atualizar['saldo_devedor']
-
-                        clientes[id_cliente] = {
-                            "nome": nome,
-                            "email": email,
-                            "telefone": telefone,
-                            "cpf": cpf,
-                            "saldo_devedor": saldo_devedor
-                        }
-
-                        with open("clientes.json", "w", encoding="utf-8") as arquivo:
-                            json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-
-                        print("Cliente atualizado com sucesso!")
-                        time.sleep(1)
-                        limpar_terminal()
-
-            else:
-                print("Cliente não encontrado.")
-                time.sleep(1)
-                limpar_terminal()
-            
-
-        elif Visualizar_cliente == '2':
-            cpf_cliente = input("Digite o CPF do cliente: ")
-            limpar_terminal()
-
-            for i,cliente in enumerate(clientes):
-                if clientes[i]["cpf"] == cpf_cliente:
-                    print(f"ID: {i+1} - Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
-            
-            if excluir:
-                    print()
-                    id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
-                    if 0 <= id_cliente < len(clientes):
-                        del clientes[id_cliente]
-                        print("Cliente excluído com sucesso!")
-
-                        with open("clientes.json", "w", encoding="utf-8") as arquivo:
-                            json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-                        time.sleep(1)
-                        limpar_terminal()
-
-                    else:
-                        print("ID inválido. Nenhum cliente foi excluído.")
-
-
-            if atualizar:
-                id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1 
-                if 0 <= id_cliente < len(clientes):
-                    cliente_atualizar = clientes[id_cliente]
-
-                    print("Digite os novos dados do cliente (deixe em branco para manter o valor atual):")
-                    nome = input(f"Nome ({cliente_atualizar['nome']}): ") or cliente_atualizar['nome']
-                    email = input(f"Email ({cliente_atualizar['email']}): ") or cliente_atualizar['email']
-                    telefone = input(f"Telefone ({cliente_atualizar['telefone']}): ") or cliente_atualizar['telefone']
-                    cpf = input(f"CPF ({cliente_atualizar['cpf']}): ") or cliente_atualizar['cpf']
-                    saldo_devedor_input = input(f"Saldo Devedor ({cliente_atualizar['saldo_devedor']}): ")
-                    saldo_devedor = float(saldo_devedor_input) if saldo_devedor_input else cliente_atualizar['saldo_devedor']
-
-                    clientes[id_cliente] = {
-                        "nome": nome,
-                        "email": email,
-                        "telefone": telefone,
-                        "cpf": cpf,
-                        "saldo_devedor": saldo_devedor
-                    }
-
-                    with open("clientes.json", "w", encoding="utf-8") as arquivo:
-                        json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-
-                    time.sleep(1)
-                    print("Cliente atualizado com sucesso!")
-
-                else:
-                    print("Cliente não encontrado.")
-        
-
-        elif Visualizar_cliente == '3':
-            telefone_cliente = input("Digite o telefone do cliente: ")
-            limpar_terminal()
-
-            for i,cliente in enumerate(clientes):
-                if clientes[i]["telefone"] == telefone_cliente:
-                    print(f"ID: {i+1} - Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
-            
-            if excluir:
-                    print()
-                    id_cliente = int(input("Digite o ID do cliente que deseja excluir: "))-1
-                    if 0 <= id_cliente < len(clientes):
-                        del clientes[id_cliente]
-
-                        with open("clientes.json", "w", encoding="utf-8") as arquivo:
-                            json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-
-
-                        print("Cliente excluído com sucesso!")
-                        time.sleep(1)
-                        limpar_terminal()
-
-                    else:
-                        print("ID inválido. Nenhum cliente foi excluído.")
-                        time.sleep(1)
-                        limpar_terminal()
-
-
-            elif atualizar:
-                print()
-                id_cliente = int(input("Digite o ID do cliente que deseja atualizar: "))-1
-                time.sleep(0.5)
-                limpar_terminal()
-
-                if 0 <= id_cliente < len(clientes):
-                    cliente_atualizar = clientes[id_cliente]
-                    print("Digite os novos dados do cliente (deixe em branco para manter o valor atual):")
-                    nome = input(f"Nome ({cliente_atualizar['nome']}): ") or cliente_atualizar['nome']
-                    email = input(f"Email ({cliente_atualizar['email']}): ") or cliente_atualizar['email']
-                    telefone = input(f"Telefone ({cliente_atualizar['telefone']}): ") or cliente_atualizar['telefone']
-                    cpf = input(f"CPF ({cliente_atualizar['cpf']}): ") or cliente_atualizar['cpf']
-                    saldo_devedor_input = input(f"Saldo Devedor ({cliente_atualizar['saldo_devedor']}): ")
-                    saldo_devedor = float(saldo_devedor_input) if saldo_devedor_input else cliente_atualizar['saldo_devedor']
-
-                    clientes[id_cliente] = {
-                        "nome": nome,
-                        "email": email,
-                        "telefone": telefone,
-                        "cpf": cpf,
-                        "saldo_devedor": saldo_devedor
-                    }
-
-                    with open("clientes.json", "w", encoding="utf-8") as arquivo:
-                        json.dump(clientes, arquivo, indent=4, ensure_ascii=False)
-
-                    print("Cliente atualizado com sucesso!")
-                    time.sleep(1)
-                    limpar_terminal()
-
-                else:
-                    print("Cliente não encontrado.")
-                    limpar_terminal()
-
-        elif Visualizar_cliente == '4':
+        if visualizar_cliente == '4':
             break
 
-        else:
+        if visualizar_cliente not in ['1', '2', '3']:
             print("Opção inválida! Por favor, escolha uma opção válida.")
+            limpar_terminal(1)
+            continue
 
+        clientes_encontrados = {}
+
+        if visualizar_cliente == '1':
+            nome_cliente = input("Digite o nome do cliente: ").strip()
+            limpar_terminal()
+            for i, dados in clientes.items() and dados["habilitado"] == True:
+                if dados["nome"].lower() == nome_cliente.lower():
+                    clientes_encontrados[i] = dados
+
+        elif visualizar_cliente == '2':
+            cpf_cliente = input("Digite o CPF do cliente: ").strip()
+            limpar_terminal()
+            for i, dados in clientes.items() and dados["habilitado"] == True:
+                if dados["cpf"] == cpf_cliente:
+                    clientes_encontrados[i] = dados
+
+        elif visualizar_cliente == '3':
+            telefone_cliente = input("Digite o telefone do cliente: ").strip()
+            limpar_terminal()
+            for i, dados in clientes.items():
+                if dados["telefone"] == telefone_cliente and dados["habilitado"] == True:
+                    clientes_encontrados[i] = dados
+
+        if clientes_encontrados:
+            print(f"Foram encontrados {len(clientes_encontrados)} resultados de busca:")
+            for i, dados in clientes_encontrados.items():
+                print(f"\nID: {i} - Nome: {dados['nome']} - Email: {dados['email']} - Telefone: {dados['telefone']} - CPF: {dados['cpf']} - Saldo Devedor: R${dados['saldo_devedor']:.2f}")
+            
+            if not excluir and not atualizar:
+                input("\nPressione Enter para continuar...")
+                limpar_terminal()
+                
+            if excluir:
+                id_escolhido = input("\nDigite o ID do cliente desejado: ").strip()
+                if id_escolhido in clientes_encontrados:
+                    clientes[id_escolhido]["habilitado"] = False
+                    atualizar_arquivos(clientes=clientes)                    
+                    
+                    print("Cliente excluído com sucesso!")
+                    limpar_terminal(1)
+
+                else:
+                    print("ID inválido ou não correspondente à busca.")
+                    limpar_terminal(1)
+
+            elif atualizar:
+                id_escolhido = input("\nDigite o ID do cliente desejado: ").strip()
+                if id_escolhido in clientes_encontrados:
+                    cliente_atualizar = clientes[id_escolhido]
+
+                    print("\nDigite os novos dados (deixe em branco para manter o atual):")
+                    nome = input(f"Nome ({cliente_atualizar['nome']}): ") or cliente_atualizar['nome']
+                    email = input(f"Email ({cliente_atualizar['email']}): ") or cliente_atualizar['email']
+                    telefone = input(f"Telefone ({cliente_atualizar['telefone']}): ") or cliente_atualizar['telefone']
+                    cpf = input(f"CPF ({cliente_atualizar['cpf']}): ") or cliente_atualizar['cpf']
+                    
+                    clientes[id_escolhido] = {
+                        "nome": nome,
+                        "email": email,
+                        "telefone": telefone,
+                        "cpf": cpf
+                    }
+
+                    atualizar_arquivos(clientes=clientes)
+                    print("Cliente atualizado com sucesso!")
+                    limpar_terminal(1)
+
+                else:
+                    print("ID inválido ou não correspondente à busca.")
+                    limpar_terminal(1)
+
+        else:
+            print("Nenhum cliente encontrado.")
+            limpar_terminal(1)
 
 def VisualizarClientes():
-    for cliente in clientes:
-        print(f"Nome: {cliente['nome']}- Email: {cliente['email']} -Telefone: {cliente['telefone']} -CPF: {cliente['cpf']} -Saldo Devedor: {cliente['saldo_devedor']}")
-        print()
+    if not clientes:
+        print("Nenhum cliente cadastrado no sistema.")
+    else:
+        print("========== LISTA DE CLIENTES ==========")
+        for id_cliente, dados in clientes.items():
+            if dados["habilitado"] == True:
+                print(f"ID: {id_cliente} Nome: {dados['nome']}")
+                print(f"Email: {dados['email']} ")
+                print(f"Telefone: {dados['telefone']} CPF: {dados['cpf']}")
+                print(f"Saldo Devedor: R${dados['saldo_devedor']:.2f}")
+                print("-" * 40) 
 
-    a =input("\nPrecione Enter Para Voltar ao Menu...")
+    input("\nPressione Enter para voltar ao Menu...")
     limpar_terminal()
 
