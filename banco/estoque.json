@@ -1,42 +1,56 @@
 {
     "1": {
-        "nome": "iPhone 15 Pro Max",
+        "nome": "iPhone 15 Pro",
         "marca": "Apple",
         "armazenamento": "256GB",
-        "preco": 7499.00,
-        "cor": "Titânio Natural",
-        "quantidade": 8
+        "preco": 6500.0,
+        "cor": "Preto",
+        "quantidade": 3,
+        "habilitado": true
     },
     "2": {
         "nome": "Galaxy S24 Ultra",
         "marca": "Samsung",
         "armazenamento": "512GB",
-        "preco": 6899.90,
-        "cor": "Preto Titânio",
-        "quantidade": 12
+        "preco": 7200.0,
+        "cor": "Branco",
+        "quantidade": 5,
+        "habilitado": true
     },
     "3": {
-        "nome": "Redmi Note 13 Pro",
-        "marca": "Xiaomi",
-        "armazenamento": "256GB",
-        "preco": 1999.00,
-        "cor": "Azul Estelar",
-        "quantidade": 20
-    },
-    "4": {
         "nome": "Moto G84",
         "marca": "Motorola",
         "armazenamento": "256GB",
-        "preco": 1499.00,
-        "cor": "Grafite",
-        "quantidade": 0
+        "preco": 1800.0,
+        "cor": "Azul",
+        "quantidade": 12,
+        "habilitado": true
+    },
+    "4": {
+        "nome": "Xiaomi 13 Pro",
+        "marca": "Xiaomi",
+        "armazenamento": "128GB",
+        "preco": 3200.0,
+        "cor": "Verde",
+        "quantidade": 0,
+        "habilitado": true
     },
     "5": {
-        "nome": "iPhone 13",
+        "nome": "iPhone 14",
         "marca": "Apple",
         "armazenamento": "128GB",
-        "preco": 3899.00,
-        "cor": "Estelar",
-        "quantidade": 5
+        "preco": 4500.0,
+        "cor": "Rosa",
+        "quantidade": 2,
+        "habilitado": true
+    },
+    "6": {
+        "nome": "Galaxy A54",
+        "marca": "Samsung",
+        "armazenamento": "128GB",
+        "preco": 2100.0,
+        "cor": "Preto",
+        "quantidade": 7,
+        "habilitado": true
     }
 }

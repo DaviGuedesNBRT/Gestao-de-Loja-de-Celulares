@@ -1,5 +1,5 @@
 import json 
-from ultils import limpar_terminal, atualizar_arquivos
+from ultils import limpar_terminal, atualizar_arquivos, adicionar_produto_carrinho, RealizarVenda
 from time import sleep
 from usuarios import CadastrarCliente
 import os
@@ -8,7 +8,6 @@ from datetime import date
 vendas = {}
 clientes = {}
 produtos = {}
-contador_completo = {}
 id_venda = 0
 
 
@@ -20,11 +19,6 @@ with open("banco/clientes.json", "r", encoding="utf-8") as arquivo:
 
 with open("banco/vendas.json", "r", encoding="utf-8") as arquivo:
     vendas = json.load(arquivo)
-
-with open("banco/contador.json", "r", encoding="utf-8") as arquivo:
-    contador_completo = json.load(arquivo)
-    id_venda = contador_completo["cont_vendas"]
-
 
 def ModuloVendas():
     while True:
@@ -52,12 +46,8 @@ def ModuloVendas():
             print('opção invalida!!')
             limpar_terminal(1)
 
-
-from datetime import date
-from time import sleep
-
 def efetuarVenda():
-    global clientes, produtos, vendas, id_venda, contador_completo
+    global clientes, produtos, vendas, id_venda
 
     venda_realizada = False
     while not venda_realizada:
@@ -78,66 +68,88 @@ def efetuarVenda():
         produtos_vendidos = []
         valor_venda = 0
 
+        # LOOP DE COMPRAS
         while True:
-            print("Deixe o campo vazio para sair")
-            nome_produto = input("Informe o nome do produto: ").strip()
+            print("""
+                Formas de Busca     
+        ==============================
+        1- Buscar Por ID do Produto
+        2- Buscar Por Nome do Produto
+        3- Finalizar Compra (Ir p/ Pagamento)L
+        ===============================    """)
+            busca = input("Qual a forma de busca ? : ")
 
-            if nome_produto == '':
+            if busca == '3':
                 limpar_terminal()
-                break
+                break # Sai do loop de busca e vai para o pagamento
 
-            produtos_encontrados = {}
-            
-            for id_prod, dados_prod in produtos.items():
-                if nome_produto.lower() in dados_prod["nome"].lower():
-                    produtos_encontrados[id_prod] = dados_prod
-
-            if produtos_encontrados:
-                print(f"\nForam encontrados {len(produtos_encontrados)} resultados:")
-                for id_prod, dados_prod in produtos_encontrados.items():
-                    print(f"""
-            ID: {id_prod} | Nome: {dados_prod['nome']}
-            Marca: {dados_prod['marca']} | Preço: R${dados_prod['preco']:.2f}
-            Cor: {dados_prod['cor']} | Estoque Atual: {dados_prod["quantidade"]}
-            ================================================================
-                    """)
-                
-                venda_id = input("Informe o ID do produto a ser vendido: ").strip()
-                
-                if venda_id in produtos_encontrados:
-                    quantidade = int(input("Informe a quantidade de produtos: "))
-
-                    while produtos[venda_id]["quantidade"] < quantidade:
-                        print(f"\nA quantidade excedeu o estoque! Estoque máximo atual: {produtos[venda_id]['quantidade']}")
-                        quantidade = int(input("Informe uma quantidade válida: "))
-
-                    produtos[venda_id]["quantidade"] -= quantidade
-
-                    produto_comprado = produtos[venda_id].copy()
-                    produto_comprado["quantidade"] = quantidade 
-
-                    produtos_vendidos.append(produto_comprado)
-                    valor_venda += produtos[venda_id]["preco"] * quantidade
-
-                    print("\nProduto adicionado ao carrinho!")
-                    sleep(1)
+            elif busca == '1':
+                while True:
                     limpar_terminal()
-                else:
-                    print("ID selecionado inválido.")
-                    sleep(1.5)
+                    print("deixe o campo vazio para voltar ao menu de busca")
+                    venda_id = input("Informe o ID do produto a ser vendido: ").strip()
+
+                    if venda_id == "":
+                        limpar_terminal()
+                        break
+
+                    # Somando o retorno da função ao valor total da venda
+                    valor_venda += adicionar_produto_carrinho(venda_id, produtos, produtos_vendidos)
+
+            elif busca == '2':
+                while True:
                     limpar_terminal()
+                    print("Deixe o campo vazio para voltar ao menu de busca")
+                    nome_produto = input("Informe o nome do produto: ").strip()
+
+                    if nome_produto == '':
+                        limpar_terminal()
+                        break
+
+                    produtos_encontrados = {}
+                    for id_prod, dados_prod in produtos.items():
+                        if nome_produto.lower() in dados_prod["nome"].lower() and dados_prod["quantidade"] > 0:
+                            produtos_encontrados[id_prod] = dados_prod
+
+                    if produtos_encontrados:
+                        print(f"\nForam encontrados {len(produtos_encontrados)} resultados:")
+                        print("-" * 90)
+                        print(f"{'ID':<5}| {'Nome':<20}| {'Marca':<12}| {'Preço (R$)':>10}| {'Cor':<10}| {'Estoque':>8}")
+                        print("-" * 90)
+                        
+                        for id_prod, dados_prod in produtos_encontrados.items():
+                            print(f"{id_prod:<5}| {dados_prod['nome']:<20}| {dados_prod['marca']:<12}| {dados_prod['preco']:>10.2f}| {dados_prod['cor']:<10}| {dados_prod['quantidade']:>8}")
+                        
+                        print("-" * 90)
+                        print("")
+
+                        venda_id = input("Informe o ID do produto a ser vendido: ").strip()
+                        
+                        if venda_id not in produtos_encontrados:
+                            print("ID invalido, tente novamente")
+                            sleep(1)
+                            continue
+
+                        # Somando o retorno da função ao valor total da venda
+                        valor_venda += adicionar_produto_carrinho(venda_id, produtos, produtos_vendidos)
+
             else:
-                print("Produto Não Encontrado!")
-                sleep(1.5)
+                limpar_terminal()
+                print("Opção invalida !")
+                sleep(1)
                 limpar_terminal()
 
+        # Se o carrinho estiver vazio, não faz sentido ir para o pagamento
         if not produtos_vendidos:
-            print("Nenhum produto foi selecionado. Venda cancelada.")
+            print("Nenhum produto foi adicionado. Venda cancelada.")
             sleep(2)
             limpar_terminal()
-            break
-
-        while not venda_realizada:               
+            continue
+        
+        RealizarVenda(cpf_cliente=cpf_venda,pagamento=valor_venda, produtos=produtos, vendas=vendas, 
+                  clientes=clientes, produtos_vendidos=produtos_vendidos, prazo=False)
+        # LOOP DE PAGAMENTO
+        '''while not venda_realizada:               
             print(f"""
         ====-FORMAS DE PAGAMENTO-====
         Valor Total: R${valor_venda:.2f}
@@ -180,21 +192,88 @@ def efetuarVenda():
             venda_atual = {
                 "cpf_cliente": cpf_venda, 
                 "valor_venda": valor_venda,
-                "forma_pagamento": nome_metodo, 
+                "forma_pagamento": nome_metodo,
+                "tipo_venda": "Venda de produto",
                 "data": hoje,
-                "produtos_vendidos": produtos_vendidos
+                "ID_produtos_vendidos": produtos_vendidos
             }
             
-            id_venda += 1
-            vendas[str(id_venda)] = venda_atual
-            contador_completo["cont_vendas"] = id_venda
+            id_venda += 1 # Incrementa de 1 em 1 para novos IDs
 
-            atualizar_arquivos(produtos=produtos, vendas=vendas, clientes=clientes, contador=contador_completo)
+            vendas[str(id_venda)] = venda_atual
+            atualizar_arquivos(produtos=produtos, vendas=vendas, clientes=clientes)
             
             print("\nVenda realizada com sucesso!")
             venda_realizada = True
             input("\nPressione Enter para sair...")
-            limpar_terminal()
-
-def visualizarVendas():
+            limpar_terminal()'''
+            
+def VisualizarVendas():
     pass
+
+def PagarPrazo():
+    venda_realizada = False
+    cpf_cliente = input("informe o cpf do cliente para pagamento: ").strip()
+    for i, cliente in clientes.items():
+        if cliente["cpf"].strip() == cpf_cliente:
+            print("cliente encontrado ! ")
+            sleep(1)
+            print(f"\nID: {i} - Nome: {cliente['nome']} - CPF: {cliente['cpf']} - Saldo Devedor: R${cliente['saldo_devedor']:.2f}")
+
+            pagamento = float(input("qual a quantia do do pagamento ? : "))
+            while not venda_realizada:               
+                print(f"""
+            ====-FORMAS DE PAGAMENTO-====
+            Valor Total: R${pagamento:.2f}
+            -----------------------------
+                1 - Pix
+                2 - A Vista (Espécie)
+                3 - A Vista (Cartão)
+                4 - Parcelado
+            =============================
+                    """)
+                
+                
+                forma_pagamento = input("Informe o método de pagamento: ").strip()   
+                hoje = date.today().isoformat()
+                nome_metodo = ""
+
+                if forma_pagamento == '1':
+                    nome_metodo = "Pix"
+                elif forma_pagamento == '2':
+                    nome_metodo = "A Vista (Espécie)"
+                elif forma_pagamento == '3':
+                    nome_metodo = "A Vista (Cartão)"
+                elif forma_pagamento == '4':
+                    nome_metodo = "Parcelado"
+                else:
+                    print("Opção inválida!")
+                    sleep(1)
+                    limpar_terminal()
+                    continue 
+
+                venda_atual = {
+                    "cpf_cliente": cpf_cliente, 
+                    "valor_venda": pagamento,
+                    "forma_pagamento": nome_metodo, 
+                    "tipo_venda": "Pagamento de divida",
+                    "data": hoje,
+                    "ID_produtos_vendidos": None
+                }
+                
+                id_venda += 1 # Incrementa de 1 em 1 para novos IDs
+
+                vendas[str(id_venda)] = venda_atual
+                atualizar_arquivos(produtos=produtos, vendas=vendas, clientes=clientes)
+
+                for id_cli, dados_cli in clientes.items():
+                    if dados_cli["cpf"] == cpf_cliente:
+                        print(f"Saldo devedor de {dados_cli['nome']} foi de R${clientes[id_cli]['saldo_devedor']:.2f}")
+                        sleep(0.5)
+                        clientes[id_cli]["saldo_devedor"] -= float(pagamento)
+                        print(f"Para: R${clientes[id_cli]['saldo_devedor']:.2f}")
+                        limpar_terminal(2)
+                        break
+                
+                venda_realizada = True
+

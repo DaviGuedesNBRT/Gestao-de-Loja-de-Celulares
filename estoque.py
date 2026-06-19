@@ -3,14 +3,9 @@ import json
 
 produtos = []
 id_produto = 0
-contador_completo = {}
 
 with open("banco/estoque.json", "r", encoding="utf-8") as arquivo:
     produtos = json.load(arquivo)
-
-with open("banco/contador.json", "r", encoding="utf-8") as arquivo:
-    contador_completo = json.load(arquivo)
-    id_produto = contador_completo["cont_estoque"]
 
 
 def ModuloEstoque():
@@ -59,7 +54,7 @@ def ModuloEstoque():
             limpar_terminal(1)
 
 def salvarProdutos():
-    global contador_completo, id_produto, produtos
+    global id_produto, produtos
     
     print("Cadastrar Produto, Se Não houver Informação Para o Campo, deixe em branco!")
     print()
@@ -71,7 +66,7 @@ def salvarProdutos():
     cor_produto = input("Digite a cor do produto: ")
     quantidade_produto = int(input("Digite a quantidade do produto: "))
 
-    id_produto += 1
+    id_produto += len(produtos)
 
     dados = {
         "nome": nome_produto,
@@ -84,8 +79,7 @@ def salvarProdutos():
     }
 
     produtos[str(id_produto)] = dados
-    contador_completo["cont_estoque"] = id_produto 
-    atualizar_arquivos(produtos=produtos, contador=contador_completo)
+    atualizar_arquivos(produtos=produtos)
 
     print("Produto cadastrado com sucesso!")
     limpar_terminal(1)
@@ -113,50 +107,35 @@ def carregarProdutos():
             limpar_terminal(1)
             continue
 
-        encontrado = False
+        # Define cabeçalho da tabela
+        print("=" * 120)
+        print(f"{'ID':<5} {'Nome':<20} {'Marca':<15} {'Armazenamento':<15} {'Preço':<12} {'Cor':<12} {'Quantidade':<10}")
+        print("-" * 120)
 
+        encontrado = False
         for id_produto, dados in produtos.items():
-            
+            # Filtro conforme opção
             if opcao == '1':
-                print(f"""
-                    ID: {id_produto} | Nome: {dados['nome']}
-                    Marca: {dados['marca']} | Armazenamento: {dados['armazenamento']}
-                    Preço: R${dados['preco']:.2f} | Cor: {dados['cor']}
-                    Quantidade: {dados['quantidade']}
-                """)
-                print("================================================================")
-                encontrado = True
-            
+                incluir = True
             elif opcao == '2':
-                if dados["quantidade"] > 0:
-                    print(f"""
-                        ID: {id_produto} | Nome: {dados['nome']}
-                        Marca: {dados['marca']} | Armazenamento: {dados['armazenamento']}
-                        Preço: R${dados['preco']:.2f} | Cor: {dados['cor']}
-                        Quantidade: {dados['quantidade']}
-                    """)
-                    print("================================================================")
-                    encontrado = True
-            
-            elif opcao == '3':
-                if dados["quantidade"] <= 0:
-                    print(f"""
-                        ID: {id_produto} | Nome: {dados['nome']}
-                        Marca: {dados['marca']} | Armazenamento: {dados['armazenamento']}
-                        Preço: R${dados['preco']:.2f} | Cor: {dados['cor']}
-                        Quantidade: {dados['quantidade']}
-                    """)
-                    print("================================================================")
-                    encontrado = True
-        
+                incluir = dados["quantidade"] > 0
+            else:  # opcao == '3'
+                incluir = dados["quantidade"] <= 0
+
+            if incluir:
+                # Exibe uma linha da tabela
+                print(f"{id_produto:<5} {dados['nome']:<20} {dados['marca']:<15} {dados['armazenamento']:<15} R$ {dados['preco']:<10.2f} {dados['cor']:<12} {dados['quantidade']:<10}")
+                encontrado = True
+
         if not encontrado:
+            limpar_terminal()
             print("Nenhum resultado encontrado para a busca!")
 
         input("\nPressione Enter para voltar ao menu...")
         limpar_terminal()
 
 def processarProduto(excluir=False, atualizar=False, rehabilitar=False):
-    global contador_completo, produtos 
+    global produtos 
     
     while True:
         if excluir:
@@ -177,23 +156,24 @@ def processarProduto(excluir=False, atualizar=False, rehabilitar=False):
         produtos_encontrados = {}
 
         for id_estoque, dados in produtos.items():
-            if dados["nome"].lower() == nome_busca.lower() and dados["habilitado"] == True:
+            if dados["nome"].lower() == nome_busca.lower() and dados.get("habilitado", True):
                 produtos_encontrados[id_estoque] = dados
 
         if not produtos_encontrados:
             print("Produto Não Encontrado!")
             limpar_terminal(1)
-            break 
+            break
 
         print(f"\nForam encontrados {len(produtos_encontrados)} resultados:")
-        for id_estoque, dados in produtos_encontrados.items() and dados["habilitado"] == True:
-            print(f"""
-                ID: {id_estoque} | Nome: {dados['nome']}
-                Marca: {dados['marca']} | Armazenamento: {dados['armazenamento']}
-                Preço: R${dados['preco']:.2f} | Cor: {dados['cor']}
-                Quantidade: {dados['quantidade']}
-            """)
-            print("================================================================")
+
+        print("-" * 100)
+        print(f"{'ID':<5} {'Nome':<15} {'Marca':<12} {'Armazenamento':<15} {'Preço (R$)':>10} {'Cor':<10} {'Qtd':>5}")
+        print("-" * 100)
+
+        for id_estoque, dados in produtos_encontrados.items():
+            print(f"{id_estoque:<5} {dados['nome']:<15} {dados['marca']:<12} {dados['armazenamento']:<15} {dados['preco']:>10.2f} {dados['cor']:<10} {dados['quantidade']:>5}")
+
+        print("-" * 100)
 
         if not excluir and not atualizar:
             input("\nPressione Enter para continuar...")

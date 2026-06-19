@@ -4,15 +4,10 @@ import time
 from ultils import limpar_terminal, atualizar_arquivos
 
 clientes = {}
-contador_completo = {}
 id_cliente = 0
 
 with open("banco/clientes.json", "r", encoding="utf-8") as arquivo:
     clientes = json.load(arquivo)
-
-with open("banco/contador.json", "r", encoding="utf-8") as arquivo:
-    contador_completo = json.load(arquivo)
-    id_cliente = contador_completo["cont_clientes"]
 
 
 def ModuloClientes():
@@ -58,7 +53,7 @@ def ModuloClientes():
 
 
 def CadastrarCliente():
-    global id_cliente, clientes, contador_completo 
+    global id_cliente, clientes 
     
     cpf = input("Digite o CPF do cliente: ")
     while True:
@@ -80,7 +75,7 @@ def CadastrarCliente():
     saldo_devedor = 0.0
     compras_feitas = 0
     
-    id_cliente += 1 
+    id_cliente += len(clientes)
     dados = {
         "nome": nome,
         "email": email,
@@ -92,9 +87,8 @@ def CadastrarCliente():
         }
 
     clientes[str(id_cliente)] = dados
-    contador_completo["cont_clientes"] = id_cliente
 
-    atualizar_arquivos(clientes=clientes, contador=contador_completo)
+    atualizar_arquivos(clientes=clientes)
     print("Cliente cadastrado com sucesso!")
     limpar_terminal(1)
     return cpf
@@ -131,15 +125,15 @@ def ProcessarCliente(excluir=False, atualizar=False):
         if visualizar_cliente == '1':
             nome_cliente = input("Digite o nome do cliente: ").strip()
             limpar_terminal()
-            for i, dados in clientes.items() and dados["habilitado"] == True:
-                if dados["nome"].lower() == nome_cliente.lower():
+            for i, dados in clientes.items():
+                if dados["habilitado"] and dados["nome"].lower() == nome_cliente.lower():
                     clientes_encontrados[i] = dados
 
         elif visualizar_cliente == '2':
             cpf_cliente = input("Digite o CPF do cliente: ").strip()
             limpar_terminal()
-            for i, dados in clientes.items() and dados["habilitado"] == True:
-                if dados["cpf"] == cpf_cliente:
+            for i, dados in clientes.items(): 
+                if dados["cpf"] == cpf_cliente and dados["habilitado"] == True:
                     clientes_encontrados[i] = dados
 
         elif visualizar_cliente == '3':
@@ -159,19 +153,60 @@ def ProcessarCliente(excluir=False, atualizar=False):
                 limpar_terminal()
                 
             if excluir:
-                id_escolhido = input("\nDigite o ID do cliente desejado: ").strip()
-                if id_escolhido in clientes_encontrados:
-                    clientes[id_escolhido]["habilitado"] = False
-                    atualizar_arquivos(clientes=clientes)                    
-                    
-                    print("Cliente excluído com sucesso!")
-                    limpar_terminal(1)
+                #opção de cpf
+                if visualizar_cliente == '2':
+                    if id_escolhido in clientes_encontrados:
+                        clientes[id_escolhido]["habilitado"] = False
+                        atualizar_arquivos(clientes=clientes)                    
+                        
+                        print("Cliente excluído com sucesso!")
+                        limpar_terminal(1)
+
+                    else:
+                        print("ID inválido ou não correspondente à busca.")
+                        limpar_terminal(1)
 
                 else:
-                    print("ID inválido ou não correspondente à busca.")
-                    limpar_terminal(1)
+                    id_escolhido = input("\nDigite o ID do cliente desejado: ").strip()
+                    if id_escolhido in clientes_encontrados:
+                        clientes[id_escolhido]["habilitado"] = False
+                        atualizar_arquivos(clientes=clientes)                    
+                        
+                        print("Cliente excluído com sucesso!")
+                        limpar_terminal(1)
+
+                    else:
+                        print("ID inválido ou não correspondente à busca.")
+                        limpar_terminal(1)
 
             elif atualizar:
+                #opção de cpf
+                if visualizar_cliente == '2':
+                    if id_escolhido in clientes_encontrados:
+                        cliente_atualizar = clientes[id_escolhido]
+
+                        print("\nDigite os novos dados (deixe em branco para manter o atual):")
+                        nome = input(f"Nome ({cliente_atualizar['nome']}): ") or cliente_atualizar['nome']
+                        email = input(f"Email ({cliente_atualizar['email']}): ") or cliente_atualizar['email']
+                        telefone = input(f"Telefone ({cliente_atualizar['telefone']}): ") or cliente_atualizar['telefone']
+                        cpf = input(f"CPF ({cliente_atualizar['cpf']}): ") or cliente_atualizar['cpf']
+                        
+                        clientes[id_escolhido] = {
+                            "nome": nome,
+                            "email": email,
+                            "telefone": telefone,
+                            "cpf": cpf
+                        }
+
+                        atualizar_arquivos(clientes=clientes)
+                        print("Cliente atualizado com sucesso!")
+                        limpar_terminal(1)
+
+                    else:
+                        print("ID inválido ou não correspondente à busca.")
+                        limpar_terminal(1)
+
+                #demais opções 
                 id_escolhido = input("\nDigite o ID do cliente desejado: ").strip()
                 if id_escolhido in clientes_encontrados:
                     cliente_atualizar = clientes[id_escolhido]
@@ -205,14 +240,16 @@ def VisualizarClientes():
     if not clientes:
         print("Nenhum cliente cadastrado no sistema.")
     else:
-        print("========== LISTA DE CLIENTES ==========")
+        # Cabeçalho da tabela
+        print("=" * 100)
+        print(f"{'ID':<5}| {'Nome':<20}| {'Email':<25}| {'Telefone':<12}| {'CPF':<12}| {'Saldo Devedor':>15}")
+        print("-" * 100)
+
+        # Linhas de dados
         for id_cliente, dados in clientes.items():
-            if dados["habilitado"] == True:
-                print(f"ID: {id_cliente} Nome: {dados['nome']}")
-                print(f"Email: {dados['email']} ")
-                print(f"Telefone: {dados['telefone']} CPF: {dados['cpf']}")
-                print(f"Saldo Devedor: R${dados['saldo_devedor']:.2f}")
-                print("-" * 40) 
+            if dados["habilitado"]:
+                print(f"{id_cliente:<5}| {dados['nome']:<20}| {dados['email']:<25}| {dados['telefone']:<12}| {dados['cpf']:<12}| R$ {dados['saldo_devedor']:>12.2f}")
+        print("=" * 100)
 
     input("\nPressione Enter para voltar ao Menu...")
     limpar_terminal()
