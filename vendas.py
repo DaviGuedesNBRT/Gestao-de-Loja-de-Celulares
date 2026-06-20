@@ -1,5 +1,5 @@
 import json 
-from ultils import limpar_terminal, adicionar_produto_carrinho, RealizarVenda, atualizar_arquivos
+from ultils import limpar_terminal, adicionar_produto_carrinho, RealizarVenda, mostrar_vendas
 from time import sleep
 from usuarios import CadastrarCliente
 from datetime import date, datetime, timedelta
@@ -159,10 +159,12 @@ def EfetuarVenda():
                     cpf_cliente=cpf_venda,
                     pagamento=valor_venda,
                     produtos_vendidos=produtos_vendidos,
-                    prazo=True
+                    prazo=True,
+                    vendas=vendas,
+                    produtos=produtos,
+                    clientes=clientes        
                 )
-
-           
+          
 def VisualizarVendas():
     global vendas
 
@@ -180,7 +182,8 @@ def VisualizarVendas():
         opcao = input("Escolha uma opção: ").strip()
 
         if opcao == "1":
-            mostrar_vendas(vendas)
+            limpar_terminal()
+            mostrar_vendas(vendas_filtradas)
 
         elif opcao == "2":
             hoje = datetime.today().date()
@@ -189,6 +192,8 @@ def VisualizarVendas():
                 id_venda: dados for id_venda, dados in vendas.items()
                 if datetime.fromisoformat(dados["data"]).date() >= ultimo_mes
             }
+
+            limpar_terminal()
             mostrar_vendas(vendas_filtradas)
 
         elif opcao == "3":
@@ -198,6 +203,7 @@ def VisualizarVendas():
                 id_venda: dados for id_venda, dados in vendas.items()
                 if datetime.fromisoformat(dados["data"]).date() >= ultima_semana
             }
+            limpar_terminal()
             mostrar_vendas(vendas_filtradas)
 
         elif opcao == "4":
@@ -206,27 +212,6 @@ def VisualizarVendas():
             print("Opção inválida, tente novamente.")
             sleep(1)
             limpar_terminal()
-
-
-def mostrar_vendas(vendas_filtradas):
-    if not vendas_filtradas:
-        print("Nenhuma venda encontrada.")
-        sleep(2)
-        limpar_terminal()
-        return
-
-    print(f"\nForam encontradas {len(vendas_filtradas)} vendas:\n")
-    print("-" * 90)
-    print(f"{'ID':<5}| {'CPF Cliente':<15}| {'Valor (R$)':>10}| {'Forma':<15}| {'Data':<12}| {'Tipo':<20}")
-    print("-" * 90)
-
-    for id_venda, dados in vendas_filtradas.items():
-        print(f"{id_venda:<5}| {dados['cpf_cliente']:<15}| {dados['valor_venda']:>10.2f}| "
-              f"{dados['forma_pagamento']:<15}| {dados['data']:<12}| {dados['tipo_venda']:<20}")
-
-    print("-" * 90)
-    input("\nPressione ENTER para continuar...")
-    limpar_terminal()
 
 
 def PagarPrazo():
@@ -249,7 +234,6 @@ def PagarPrazo():
         print("CPF Não Encontrado, Por Favor Cadastre-O!")
         sleep(2)
         limpar_terminal()
-
 
 
 def RelatorioFinanceiro():
@@ -275,8 +259,7 @@ def RelatorioFinanceiro():
             break
         else:
             print("Opção inválida!")
-            sleep(1)
-            limpar_terminal()
+            limpar_terminal(1)
 
 
 def relatorio_faturamento():
@@ -355,8 +338,7 @@ def relatorio_dividas():
 
     if not clientes_endividados:
         print("Nenhum cliente com dívida encontrado.")
-        sleep(2)
-        limpar_terminal()
+        limpar_terminal(2)
         return
 
     # Ordenações

@@ -75,6 +75,8 @@ def adicionar_produto_carrinho(venda_id, produtos, produtos_vendidos):
         return 0 
 
 def RealizarVenda(venda_realizada=False, pagamento=0.0, cpf_cliente='', vendas={}, produtos={}, clientes={}, prazo=False, produtos_vendidos=None):    
+    with open("banco/clientes.json", "r", encoding="utf-8") as arquivo:
+        clientes = json.load(arquivo)
     if produtos_vendidos is None:
         produtos_vendidos = []
 
@@ -147,3 +149,23 @@ def RealizarVenda(venda_realizada=False, pagamento=0.0, cpf_cliente='', vendas={
         sleep(1.5)
         limpar_terminal()
         return True
+
+def mostrar_vendas(vendas_filtradas):
+    if not vendas_filtradas:
+        print("Nenhuma venda encontrada.")
+        sleep(2)
+        limpar_terminal()
+        return
+
+    print(f"\nForam encontradas {len(vendas_filtradas)} vendas:\n")
+    print("-" * 90)
+    print(f"{'ID':<5}| {'CPF Cliente':<15}| {'Valor (R$)':>10}| {'Forma':<15}| {'Data':<12}| {'Tipo':<20}")
+    print("-" * 90)
+
+    for id_venda, dados in vendas_filtradas.items():
+        print(f"{id_venda:<5}| {dados['cpf_cliente']:<15}| {dados['valor_venda']:>10.2f}| "
+              f"{dados['forma_pagamento']:<15}| {dados['data']:<12}| {dados['tipo_venda']:<20}")
+
+    print("-" * 90)
+    input("\nPressione ENTER para continuar...")
+    limpar_terminal()

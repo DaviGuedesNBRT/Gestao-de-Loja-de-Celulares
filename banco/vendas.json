@@ -82,5 +82,49 @@
                 "preco_unitario": 6999.9
             }
         ]
+    },
+    "7": {
+        "cpf_cliente": "12",
+        "valor_venda": 5529.0,
+        "forma_pagamento": "Pix",
+        "tipo_venda": "Pagamento de Dívida",
+        "data": "2026-06-20",
+        "ID_produtos_vendidos": []
+    },
+    "8": {
+        "cpf_cliente": "12",
+        "valor_venda": 3428814.0,
+        "forma_pagamento": "Pix",
+        "tipo_venda": "Pagamento de Dívida",
+        "data": "2026-06-20",
+        "ID_produtos_vendidos": []
+    },
+    "9": {
+        "cpf_cliente": "89",
+        "valor_venda": 6999.9,
+        "forma_pagamento": "Pix",
+        "tipo_venda": "Venda de produto",
+        "data": "2026-06-20",
+        "ID_produtos_vendidos": [
+            {
+                "id": "1",
+                "quantidade": 1,
+                "preco_unitario": 6999.9
+            }
+        ]
+    },
+    "10": {
+        "cpf_cliente": "89",
+        "valor_venda": 6999.9,
+        "forma_pagamento": "Pix",
+        "tipo_venda": "Venda de produto",
+        "data": "2026-06-20",
+        "ID_produtos_vendidos": [
+            {
+                "id": "1",
+                "quantidade": 1,
+                "preco_unitario": 6999.9
+            }
+        ]
     }
 }
