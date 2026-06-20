@@ -12,14 +12,17 @@ def ModuloEstoque():
     while True:
         limpar_terminal()
         print("""
-        ======================
-        1 - Cadastrar Produto
-        2 - Atualizar Produto
-        3 - Excluir Produto
-        4 - Visualizar Produto
-        5 - Visualizar Produtos
-        6 - Voltar para o Menu Principal
-        =======================
+        ========================================
+                        ESTOQUE
+        ========================================
+            1 - Cadastrar Produto
+            2 - Atualizar Produto
+            3 - Excluir Produto
+            4 - Rehabilitar Produto
+            5 - Visualizar Produto
+            6 - Visualizar Produtos
+            7 - Voltar para o Menu Principal
+        ========================================
         """)
 
         opcao = input("Escolha uma opção: ")
@@ -30,21 +33,25 @@ def ModuloEstoque():
 
         elif opcao == '2':
             limpar_terminal(0.2)
-            processarProduto(atualizar=True)
+            ProcessarProduto(atualizar=True)
 
         elif opcao == '3':
             limpar_terminal(0.2)
-            processarProduto(excluir=True)
-
+            ProcessarProduto(excluir=True)
+        
         elif opcao == '4':
             limpar_terminal(0.2)
-            processarProduto()
+            ProcessarProduto(rehabilitar=True)
 
         elif opcao == '5':
             limpar_terminal(0.2)
-            carregarProdutos()
+            ProcessarProduto()
 
         elif opcao == '6':
+            limpar_terminal(0.2)
+            carregarProdutos()
+
+        elif opcao == '7':
             limpar_terminal(0.1)
             break
 
@@ -87,129 +94,165 @@ def salvarProdutos():
 def carregarProdutos():
     while True:
         print("""
-            ======================
-            1 - Visualizar Todos os Produtos
-            2 - Visualizar Produtos Disponíveis
-            3 - Visualizar Produtos Indisponíveis
-            4 - Voltar Para o Menu Anterior
-            ======================
+            ============================================
+                        VISUALIZAR PRODUTOS
+            ============================================
+                1 - Visualizar Todos os Produtos
+                2 - Visualizar Produtos Disponíveis
+                3 - Visualizar Produtos Indisponíveis
+                4 - Visualizar Produtos Desabilitados
+                5 - Voltar Para o Menu Anterior
+            ============================================
             """)
         
-        opcao = input("Escolha uma opção: ")
+        opcao = input("Escolha uma opção: ").strip()
         print()
         limpar_terminal()
 
-        if opcao == '4':
+        if opcao == '5':
             break
 
-        if opcao not in ['1', '2', '3']:
+        if opcao not in ['1', '2', '3', '4']:
             print("Opção inválida! Por favor, escolha uma opção válida.")
             limpar_terminal(1)
             continue
 
-        # Define cabeçalho da tabela
+        # CORREÇÃO: Define se mostra a coluna "Status" (Opção 1 ou 4)
+        mostrar_status = opcao in ['1', '4']
+        coluna_status = f"| {'Status':<10}" if mostrar_status else ""
+
+        # Cabeçalho da tabela adaptável
         print("=" * 120)
-        print(f"{'ID':<5} {'Nome':<20} {'Marca':<15} {'Armazenamento':<15} {'Preço':<12} {'Cor':<12} {'Quantidade':<10}")
+        print(f"{'ID':<5}| {'Nome':<20}| {'Marca':<15}| {'Armazenamento':<15}| {'Preço':>12}| {'Cor':<12}| {'Quantidade':<10}{coluna_status}")
         print("-" * 120)
 
         encontrado = False
         for id_produto, dados in produtos.items():
-            # Filtro conforme opção
+            incluir = False
+            
+            # Filtros ajustados
             if opcao == '1':
                 incluir = True
             elif opcao == '2':
-                incluir = dados["quantidade"] > 0
-            else:  # opcao == '3'
-                incluir = dados["quantidade"] <= 0
+                incluir = dados["quantidade"] > 0 and dados.get("habilitado", True) != False
+            elif opcao == '3':
+                incluir = dados['quantidade'] <= 0 and dados.get("habilitado", True) != False
+            elif opcao == '4':
+                incluir = dados.get("habilitado") == False
 
             if incluir:
-                # Exibe uma linha da tabela
-                print(f"{id_produto:<5} {dados['nome']:<20} {dados['marca']:<15} {dados['armazenamento']:<15} R$ {dados['preco']:<10.2f} {dados['cor']:<12} {dados['quantidade']:<10}")
+                # Tratando o texto do status (Ativo/Inativo) para ficar bonito na tabela
+                status_texto = "Inativo" if dados.get("habilitado") == False else "Ativo"
+                campo_status = f"| {status_texto:<10}" if mostrar_status else ""
+                
+                # Exibe a linha formatada (Preço alinhado à direita com '>')
+                print(f"{id_produto:<5}| {dados['nome']:<20}| {dados['marca']:<15}| {dados['armazenamento']:<15}| R$ {dados['preco']:>9.2f}| {dados['cor']:<12}| {dados['quantidade']:^10}{campo_status}")
                 encontrado = True
 
         if not encontrado:
             limpar_terminal()
             print("Nenhum resultado encontrado para a busca!")
 
+        print("-" * 120)
         input("\nPressione Enter para voltar ao menu...")
         limpar_terminal()
 
-def processarProduto(excluir=False, atualizar=False, rehabilitar=False):
+def ProcessarProduto(excluir=False, atualizar=False, rehabilitar=False):
     global produtos 
     
     while True:
         if excluir:
-            prompt = "Digite o Nome do Produto para Exclusão: "
+            prompt = "Digite O Nome Do Produto Para Exclusão: "
         elif atualizar:
-            prompt = "Digite o Nome do Produto para Atualização: "
+            prompt = "Digite O Nome Do Produto Para Atualização: "
         elif rehabilitar:
-            prompt = "Digite o Nome do Produto para Rehabilitar: "
+            prompt = "Digite O Nome Do Produto Para Reabilitar: "
         else:
-            prompt = "Digite o Nome do Produto para Visualizar: "
+            prompt = "Digite O Nome Do Produto Para Visualizar: "
 
         nome_busca = input(prompt).strip()
         if not nome_busca:
-            print("O nome não pode ser vazio!")
+            print("O Nome Não Pode Ser Vazio!")
             limpar_terminal(1)
             continue
 
         produtos_encontrados = {}
 
         for id_estoque, dados in produtos.items():
-            if dados["nome"].lower() == nome_busca.lower() and dados.get("habilitado", True):
-                produtos_encontrados[id_estoque] = dados
+            if nome_busca.lower() in dados["nome"].lower():
+                # Se for reabilitar, pega só os inativos
+                if rehabilitar and not dados.get("habilitado", True):
+                    produtos_encontrados[id_estoque] = dados
+                # Se não for reabilitar, pega só os ativos
+                elif not rehabilitar and dados.get("habilitado", True):
+                    produtos_encontrados[id_estoque] = dados
 
         if not produtos_encontrados:
             print("Produto Não Encontrado!")
             limpar_terminal(1)
             break
 
-        print(f"\nForam encontrados {len(produtos_encontrados)} resultados:")
+        print(f"\nForam Encontrados {len(produtos_encontrados)} Resultados:")
 
-        print("-" * 100)
-        print(f"{'ID':<5} {'Nome':<15} {'Marca':<12} {'Armazenamento':<15} {'Preço (R$)':>10} {'Cor':<10} {'Qtd':>5}")
-        print("-" * 100)
-
+        print("-" * 110)
+        print(f"{'ID':<5}| {'Nome':<25}| {'Marca':<17}| {'Armazenamento':<15}| {'Preço (R$)':>10}| {'Cor':<12}| {'Qtd':>5}")
+        print("-" * 110)
+        
         for id_estoque, dados in produtos_encontrados.items():
-            print(f"{id_estoque:<5} {dados['nome']:<15} {dados['marca']:<12} {dados['armazenamento']:<15} {dados['preco']:>10.2f} {dados['cor']:<10} {dados['quantidade']:>5}")
+            print(f"{id_estoque:<5}| {dados['nome']:<25}| {dados['marca']:<17}| {dados['armazenamento']:<15}| "
+                  f"{dados['preco']:>10.2f}| {dados['cor']:<12}| {dados['quantidade']:>5}")
+        print("-" * 110)
 
-        print("-" * 100)
-
-        if not excluir and not atualizar:
-            input("\nPressione Enter para continuar...")
+        if not excluir and not atualizar and not rehabilitar:
+            input("\nPressione Enter Para Continuar...")
             limpar_terminal()
             break
             
         if excluir:
-            id_escolhido = input("\nDigite o ID do Produto desejado: ").strip()
+            id_escolhido = input("\nDigite O ID Do Produto Desejado: ").strip()
             if id_escolhido in produtos_encontrados:
+                limpar_terminal(0.5)
                 produtos[id_escolhido]["habilitado"] = False
                 atualizar_arquivos(produtos=produtos)   
-
                 print("Produto Excluído Com Sucesso!")
                 limpar_terminal(1)
                 break
-
             else:
-                print("ID inválido ou não correspondente à busca.")
+                limpar_terminal(0.5)
+                print("ID Inválido Ou Não Correspondente À Busca.")
                 limpar_terminal(1) 
 
+        elif rehabilitar:
+            id_escolhido = input("\nDigite O ID Do Produto Desejado: ").strip()
+            if id_escolhido in produtos_encontrados:
+                limpar_terminal(0.5)
+                produtos[id_escolhido]["habilitado"] = True
+                atualizar_arquivos(produtos=produtos)   
+                print("Produto Reabilitado Com Sucesso!")
+                limpar_terminal(1)
+                break
+            else:
+                limpar_terminal(0.5)
+                print("ID Inválido Ou Não Correspondente À Busca.")
+                limpar_terminal(1)
+
         elif atualizar:
-            id_escolhido = input("\nDigite o ID do Produto desejado: ").strip()
-            if id_escolhido in produtos_encontrados:                    
-                print("Atualizar Produto, se não houver informação para o campo, deixe em branco!\n")
+            id_escolhido = input("\nDigite O ID Do Produto Desejado: ").strip()
+            if id_escolhido in produtos_encontrados:
+                limpar_terminal(0.5)                    
+                print("Atualizar Produto, Se Não Houver Informação Para O Campo, Deixe Em Branco!\n")
                 produto_atualizar = produtos[id_escolhido]
 
-                nome_produto = input(f"Digite o nome do produto ({produto_atualizar['nome']}): ") or produto_atualizar['nome']
-                marca_produto = input(f"Digite a marca do produto ({produto_atualizar['marca']}): ") or produto_atualizar['marca']
-                armazenamento = input(f"Digite o armazenamento ({produto_atualizar['armazenamento']}): ") or produto_atualizar['armazenamento']
+                nome_produto = input(f"Digite O Nome Do Produto ({produto_atualizar['nome']}): ") or produto_atualizar['nome']
+                marca_produto = input(f"Digite A Marca Do Produto ({produto_atualizar['marca']}): ") or produto_atualizar['marca']
+                armazenamento = input(f"Digite O Armazenamento ({produto_atualizar['armazenamento']}): ") or produto_atualizar['armazenamento']
 
-                preco_input = input(f"Digite o preço do produto ({produto_atualizar['preco']}): ")
+                preco_input = input(f"Digite O Preço Do Produto ({produto_atualizar['preco']}): ")
                 preco_produto = float(preco_input) if preco_input else produto_atualizar['preco']
 
-                cor_produto = input(f"Digite a cor do produto ({produto_atualizar['cor']}): ") or produto_atualizar['cor']
+                cor_produto = input(f"Digite A Cor Do Produto ({produto_atualizar['cor']}): ") or produto_atualizar['cor']
 
-                quantidade_input = input(f"Digite a quantidade do produto ({produto_atualizar['quantidade']}): ")
+                quantidade_input = input(f"Digite A Quantidade Do Produto ({produto_atualizar['quantidade']}): ")
                 quantidade_produto = int(quantidade_input) if quantidade_input else produto_atualizar['quantidade']
 
                 produtos[id_escolhido] = {
@@ -218,14 +261,18 @@ def processarProduto(excluir=False, atualizar=False, rehabilitar=False):
                     "armazenamento": armazenamento,
                     "preco": preco_produto,
                     "cor": cor_produto,
-                    "quantidade": quantidade_produto
+                    "quantidade": quantidade_produto,
+                    "habilitado": True
                 }
 
-                atualizar_arquivos(produtos=produtos)                
+                atualizar_arquivos(produtos=produtos)
+                limpar_terminal(0.5)                
                 print("Produto Atualizado Com Sucesso!")
                 limpar_terminal(1)
                 break
             else:
-                print("ID inválido ou não correspondente à busca.")
-                limpar_terminal(1)                
+                print("ID Inválido Ou Não Correspondente À Busca.")
+                limpar_terminal(1)
+
+                
 

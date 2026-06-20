@@ -1,9 +1,8 @@
 import json 
-from ultils import limpar_terminal, atualizar_arquivos, adicionar_produto_carrinho, RealizarVenda
+from ultils import limpar_terminal, adicionar_produto_carrinho, RealizarVenda, atualizar_arquivos
 from time import sleep
 from usuarios import CadastrarCliente
-import os
-from datetime import date
+from datetime import date, datetime, timedelta
 
 vendas = {}
 clientes = {}
@@ -24,9 +23,13 @@ def ModuloVendas():
     while True:
         print('''
     ============================
+              VENDAS
+    ============================
         1 - Efetuar Venda
-        2 - Visualizar vendas
-        3 - Voltar Para Home
+        2 - Visualizar Vendas
+        3 - Pagar Divida
+        4 - Relatorio Financeiro
+        5 - Voltar Para Home
     ============================
             ''')
             
@@ -34,33 +37,38 @@ def ModuloVendas():
         limpar_terminal(0.1)
 
         if opcao == '1':
-            efetuarVenda()
+            limpar_terminal()
+            EfetuarVenda()
 
         elif opcao == '2':
-            pass
+            limpar_terminal()
+            VisualizarVendas()
 
         elif opcao == '3':
+            limpar_terminal()
+            PagarPrazo()
+
+        elif opcao == '4':
+            limpar_terminal()
+            RelatorioFinanceiro()
+
+        elif opcao == '5':
             break
         
         else:
             print('opção invalida!!')
             limpar_terminal(1)
 
-def efetuarVenda():
-    global clientes, produtos, vendas, id_venda
+def EfetuarVenda():
+    global clientes, produtos, vendas
 
     venda_realizada = False
     while not venda_realizada:
-        cpf_venda = input('CPF Do Comprador: ').strip()
-        cpf_encontrado = False
-        
-        for id_cli, dados_cli in clientes.items():
-            if dados_cli["cpf"] == cpf_venda:
-                cpf_encontrado = True
-                break
-        
-        if not cpf_encontrado:
-            print('CPF não encontrado, por favor cadastre-o!')
+        cpf_venda = input("CPF Do Comprador: ").strip()
+
+        # Verifica se o CPF existe diretamente como chave
+        if cpf_venda not in clientes:
+            print("CPF Não Encontrado, Por Favor Cadastre-O!")
             sleep(2)
             limpar_terminal()
             cpf_venda = CadastrarCliente() 
@@ -68,41 +76,42 @@ def efetuarVenda():
         produtos_vendidos = []
         valor_venda = 0
 
-        # LOOP DE COMPRAS
+        # Loop de compras
         while True:
             print("""
-                Formas de Busca     
-        ==============================
-        1- Buscar Por ID do Produto
-        2- Buscar Por Nome do Produto
-        3- Finalizar Compra (Ir p/ Pagamento)L
-        ===============================    """)
-            busca = input("Qual a forma de busca ? : ")
+        ===============================================
+                        Formas De Busca     
+        ================================================
+            1 - Buscar Por ID Do Produto
+            2 - Buscar Por Nome Do Produto
+            3 - Finalizar Compra (Ir Para Pagamento)
+        ================================================
+            """)
+            busca = input("Qual A Forma De Busca? : ")
 
             if busca == '3':
                 limpar_terminal()
-                break # Sai do loop de busca e vai para o pagamento
+                break  # Sai do loop de busca e vai para o pagamento
 
             elif busca == '1':
                 while True:
                     limpar_terminal()
-                    print("deixe o campo vazio para voltar ao menu de busca")
-                    venda_id = input("Informe o ID do produto a ser vendido: ").strip()
+                    print("Deixe O Campo Vazio Para Voltar Ao Menu De Busca")
+                    venda_id = input("Informe O ID Do Produto A Ser Vendido: ").strip()
 
                     if venda_id == "":
                         limpar_terminal()
                         break
 
-                    # Somando o retorno da função ao valor total da venda
                     valor_venda += adicionar_produto_carrinho(venda_id, produtos, produtos_vendidos)
 
             elif busca == '2':
                 while True:
                     limpar_terminal()
-                    print("Deixe o campo vazio para voltar ao menu de busca")
-                    nome_produto = input("Informe o nome do produto: ").strip()
+                    print("Deixe O Campo Vazio Para Voltar Ao Menu De Busca")
+                    nome_produto = input("Informe O Nome Do Produto: ").strip()
 
-                    if nome_produto == '':
+                    if nome_produto == "":
                         limpar_terminal()
                         break
 
@@ -112,168 +121,268 @@ def efetuarVenda():
                             produtos_encontrados[id_prod] = dados_prod
 
                     if produtos_encontrados:
-                        print(f"\nForam encontrados {len(produtos_encontrados)} resultados:")
+                        print(f"\nForam Encontrados {len(produtos_encontrados)} Resultados:")
                         print("-" * 90)
                         print(f"{'ID':<5}| {'Nome':<20}| {'Marca':<12}| {'Preço (R$)':>10}| {'Cor':<10}| {'Estoque':>8}")
                         print("-" * 90)
                         
                         for id_prod, dados_prod in produtos_encontrados.items():
-                            print(f"{id_prod:<5}| {dados_prod['nome']:<20}| {dados_prod['marca']:<12}| {dados_prod['preco']:>10.2f}| {dados_prod['cor']:<10}| {dados_prod['quantidade']:>8}")
+                            print(f"{id_prod:<5}| {dados_prod['nome']:<20}| {dados_prod['marca']:<12}| "
+                                  f"{dados_prod['preco']:>10.2f}| {dados_prod['cor']:<10}| {dados_prod['quantidade']:>8}")
                         
                         print("-" * 90)
-                        print("")
 
-                        venda_id = input("Informe o ID do produto a ser vendido: ").strip()
+                        venda_id = input("Informe O ID Do Produto A Ser Vendido: ").strip()
                         
                         if venda_id not in produtos_encontrados:
-                            print("ID invalido, tente novamente")
+                            print("ID Inválido, Tente Novamente")
                             sleep(1)
                             continue
 
-                        # Somando o retorno da função ao valor total da venda
                         valor_venda += adicionar_produto_carrinho(venda_id, produtos, produtos_vendidos)
 
             else:
                 limpar_terminal()
-                print("Opção invalida !")
+                print("Opção Inválida!")
                 sleep(1)
                 limpar_terminal()
 
-        # Se o carrinho estiver vazio, não faz sentido ir para o pagamento
+        # Se o carrinho estiver vazio, cancela a venda
         if not produtos_vendidos:
-            print("Nenhum produto foi adicionado. Venda cancelada.")
+            print("Nenhum Produto Foi Adicionado. Venda Cancelada.")
             sleep(2)
             limpar_terminal()
             continue
         
-        RealizarVenda(cpf_cliente=cpf_venda,pagamento=valor_venda, produtos=produtos, vendas=vendas, 
-                  clientes=clientes, produtos_vendidos=produtos_vendidos, prazo=False)
-        # LOOP DE PAGAMENTO
-        '''while not venda_realizada:               
-            print(f"""
-        ====-FORMAS DE PAGAMENTO-====
-        Valor Total: R${valor_venda:.2f}
-        -----------------------------
-            1 - Pix
-            2 - A Vista (Espécie)
-            3 - A Vista (Cartão)
-            4 - Parcelado
-            5 - A Prazo
-        =============================
-                """)
-            
-            forma_pagamento = input("Informe o método de pagamento: ").strip()   
-            hoje = date.today().isoformat()
-            nome_metodo = ""
+        # Chama a função de realizar venda
+        venda_realizada = RealizarVenda(
+                    cpf_cliente=cpf_venda,
+                    pagamento=valor_venda,
+                    produtos_vendidos=produtos_vendidos,
+                    prazo=True
+                )
 
-            if forma_pagamento == '1':
-                nome_metodo = "Pix"
-            elif forma_pagamento == '2':
-                nome_metodo = "A Vista (Espécie)"
-            elif forma_pagamento == '3':
-                nome_metodo = "A Vista (Cartão)"
-            elif forma_pagamento == '4':
-                nome_metodo = "Parcelado"
-            elif forma_pagamento == '5':
-                nome_metodo = "A Prazo"
-                
-                for id_cli, dados_cli in clientes.items():
-                    if dados_cli["cpf"] == cpf_venda:
-                        clientes[id_cli]["saldo_devedor"] += float(valor_venda)
-                        print(f"Saldo devedor de {dados_cli['nome']} atualizado para: R${clientes[id_cli]['saldo_devedor']:.2f}")
-                        sleep(2)
-                        break
-            else:
-                print("Opção inválida!")
-                sleep(1)
-                limpar_terminal()
-                continue 
-
-            venda_atual = {
-                "cpf_cliente": cpf_venda, 
-                "valor_venda": valor_venda,
-                "forma_pagamento": nome_metodo,
-                "tipo_venda": "Venda de produto",
-                "data": hoje,
-                "ID_produtos_vendidos": produtos_vendidos
-            }
-            
-            id_venda += 1 # Incrementa de 1 em 1 para novos IDs
-
-            vendas[str(id_venda)] = venda_atual
-            atualizar_arquivos(produtos=produtos, vendas=vendas, clientes=clientes)
-            
-            print("\nVenda realizada com sucesso!")
-            venda_realizada = True
-            input("\nPressione Enter para sair...")
-            limpar_terminal()'''
-            
+           
 def VisualizarVendas():
-    pass
+    global vendas
+
+    while True:
+        print("""
+        ===============================================
+                    Visualização de Vendas
+        ===============================================
+            1 - Todas as vendas
+            2 - Vendas do último mês
+            3 - Vendas da última semana
+            4 - Voltar
+        ===============================================
+        """)
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao == "1":
+            mostrar_vendas(vendas)
+
+        elif opcao == "2":
+            hoje = datetime.today().date()
+            ultimo_mes = hoje - timedelta(days=30)
+            vendas_filtradas = {
+                id_venda: dados for id_venda, dados in vendas.items()
+                if datetime.fromisoformat(dados["data"]).date() >= ultimo_mes
+            }
+            mostrar_vendas(vendas_filtradas)
+
+        elif opcao == "3":
+            hoje = datetime.today().date()
+            ultima_semana = hoje - timedelta(days=7)
+            vendas_filtradas = {
+                id_venda: dados for id_venda, dados in vendas.items()
+                if datetime.fromisoformat(dados["data"]).date() >= ultima_semana
+            }
+            mostrar_vendas(vendas_filtradas)
+
+        elif opcao == "4":
+            break
+        else:
+            print("Opção inválida, tente novamente.")
+            sleep(1)
+            limpar_terminal()
+
+
+def mostrar_vendas(vendas_filtradas):
+    if not vendas_filtradas:
+        print("Nenhuma venda encontrada.")
+        sleep(2)
+        limpar_terminal()
+        return
+
+    print(f"\nForam encontradas {len(vendas_filtradas)} vendas:\n")
+    print("-" * 90)
+    print(f"{'ID':<5}| {'CPF Cliente':<15}| {'Valor (R$)':>10}| {'Forma':<15}| {'Data':<12}| {'Tipo':<20}")
+    print("-" * 90)
+
+    for id_venda, dados in vendas_filtradas.items():
+        print(f"{id_venda:<5}| {dados['cpf_cliente']:<15}| {dados['valor_venda']:>10.2f}| "
+              f"{dados['forma_pagamento']:<15}| {dados['data']:<12}| {dados['tipo_venda']:<20}")
+
+    print("-" * 90)
+    input("\nPressione ENTER para continuar...")
+    limpar_terminal()
+
 
 def PagarPrazo():
-    venda_realizada = False
-    cpf_cliente = input("informe o cpf do cliente para pagamento: ").strip()
-    for i, cliente in clientes.items():
-        if cliente["cpf"].strip() == cpf_cliente:
-            print("cliente encontrado ! ")
+    global clientes, produtos, vendas
+    cpf_cliente = input("Informe O CPF Do Cliente Para Pagamento: ").strip()
+
+    if cpf_cliente in clientes:
+        cliente = clientes[cpf_cliente]
+        print("Cliente Encontrado!")
+        sleep(1)
+        print(f"\nCPF: {cpf_cliente} - Nome: {cliente['nome']} - Saldo Devedor: R${cliente['saldo_devedor']:.2f}")
+
+        pagamento = float(input("Qual A Quantia Do Pagamento? : "))
+
+        RealizarVenda(cpf_cliente=cpf_cliente,pagamento=pagamento,produtos=produtos,
+                        vendas=vendas,clientes=clientes,prazo=False)
+        
+        limpar_terminal(1)
+    else:
+        print("CPF Não Encontrado, Por Favor Cadastre-O!")
+        sleep(2)
+        limpar_terminal()
+
+
+
+def RelatorioFinanceiro():
+    global vendas, clientes
+
+    while True:
+        print("""
+        ===============================================
+                  Relatórios Financeiros
+        ===============================================
+            1 - Faturamento
+            2 - Vendas a Prazo / Dívidas
+            3 - Voltar
+        ===============================================
+        """)
+        opcao = input("Escolha uma opção: ").strip()
+
+        if opcao == "1":
+            relatorio_faturamento()
+        elif opcao == "2":
+            relatorio_dividas()
+        elif opcao == "3":
+            break
+        else:
+            print("Opção inválida!")
             sleep(1)
-            print(f"\nID: {i} - Nome: {cliente['nome']} - CPF: {cliente['cpf']} - Saldo Devedor: R${cliente['saldo_devedor']:.2f}")
+            limpar_terminal()
 
-            pagamento = float(input("qual a quantia do do pagamento ? : "))
-            while not venda_realizada:               
-                print(f"""
-            ====-FORMAS DE PAGAMENTO-====
-            Valor Total: R${pagamento:.2f}
-            -----------------------------
-                1 - Pix
-                2 - A Vista (Espécie)
-                3 - A Vista (Cartão)
-                4 - Parcelado
-            =============================
-                    """)
-                
-                
-                forma_pagamento = input("Informe o método de pagamento: ").strip()   
-                hoje = date.today().isoformat()
-                nome_metodo = ""
 
-                if forma_pagamento == '1':
-                    nome_metodo = "Pix"
-                elif forma_pagamento == '2':
-                    nome_metodo = "A Vista (Espécie)"
-                elif forma_pagamento == '3':
-                    nome_metodo = "A Vista (Cartão)"
-                elif forma_pagamento == '4':
-                    nome_metodo = "Parcelado"
-                else:
-                    print("Opção inválida!")
-                    sleep(1)
-                    limpar_terminal()
-                    continue 
+def relatorio_faturamento():
+    global vendas
+    hoje = datetime.today().date()
+    limpar_terminal()
 
-                venda_atual = {
-                    "cpf_cliente": cpf_cliente, 
-                    "valor_venda": pagamento,
-                    "forma_pagamento": nome_metodo, 
-                    "tipo_venda": "Pagamento de divida",
-                    "data": hoje,
-                    "ID_produtos_vendidos": None
-                }
-                
-                id_venda += 1 # Incrementa de 1 em 1 para novos IDs
+    print("""
+    ===============================================
+                Faturamento por Período
+    ===============================================
+        1 - Últimos 2 anos
+        2 - Último ano
+        3 - Últimos 6 meses
+        4 - Último mês
+        5 - Última semana
+        6 - Voltar
+    ===============================================
+    """)
+    opcao = input("Escolha uma opção: ").strip()
+    limpar_terminal()
 
-                vendas[str(id_venda)] = venda_atual
-                atualizar_arquivos(produtos=produtos, vendas=vendas, clientes=clientes)
+    if opcao == "6":
+        return
 
-                for id_cli, dados_cli in clientes.items():
-                    if dados_cli["cpf"] == cpf_cliente:
-                        print(f"Saldo devedor de {dados_cli['nome']} foi de R${clientes[id_cli]['saldo_devedor']:.2f}")
-                        sleep(0.5)
-                        clientes[id_cli]["saldo_devedor"] -= float(pagamento)
-                        print(f"Para: R${clientes[id_cli]['saldo_devedor']:.2f}")
-                        limpar_terminal(2)
-                        break
-                
-                venda_realizada = True
+    # Definir intervalo
+    if opcao == "1":
+        inicio = hoje - timedelta(days=730)
+    elif opcao == "2":
+        inicio = hoje - timedelta(days=365)
+    elif opcao == "3":
+        inicio = hoje - timedelta(days=180)
+    elif opcao == "4":
+        inicio = hoje - timedelta(days=30)
+    elif opcao == "5":
+        inicio = hoje - timedelta(days=7)
+    else:
+        print("Opção inválida!")
+        return
+
+    # Filtrar vendas
+    vendas_filtradas = [
+        dados for dados in vendas.values()
+        if datetime.fromisoformat(dados["data"]).date() >= inicio
+    ]
+
+    faturamento = sum(v["valor_venda"] for v in vendas_filtradas)
+    print(f"\nFaturamento no período: R${faturamento:.2f}")
+    print(f"Total de vendas: {len(vendas_filtradas)}")
+    input("\nPressione ENTER para continuar...")
+    limpar_terminal()
+
+
+def relatorio_dividas():
+    global clientes
+    limpar_terminal()
+    print("""
+    ===============================================
+                Relatório de Dívidas
+    ===============================================
+        1 - Ordenar por valor (crescente)
+        2 - Ordenar por valor (decrescente)
+        3 - Ordenar por data (mais antigas)
+        4 - Ordenar por data (mais novas)
+        5 - Voltar
+    ===============================================
+    """)
+    opcao = input("Escolha uma opção: ").strip()
+    limpar_terminal()
+
+    # Filtrar clientes com dívida
+    clientes_endividados = {
+        cpf: dados for cpf, dados in clientes.items()
+        if dados["saldo_devedor"] > 0
+    }
+
+    if not clientes_endividados:
+        print("Nenhum cliente com dívida encontrado.")
+        sleep(2)
+        limpar_terminal()
+        return
+
+    # Ordenações
+    if opcao == "1":
+        ordenados = sorted(clientes_endividados.items(), key=lambda x: x[1]["saldo_devedor"])
+    elif opcao == "2":
+        ordenados = sorted(clientes_endividados.items(), key=lambda x: x[1]["saldo_devedor"], reverse=True)
+    elif opcao == "3":
+        ordenados = sorted(clientes_endividados.items(), key=lambda x: datetime.fromisoformat(x[1].get("data_divida", datetime.today().isoformat())))
+    elif opcao == "4":
+        ordenados = sorted(clientes_endividados.items(), key=lambda x: datetime.fromisoformat(x[1].get("data_divida", datetime.today().isoformat())), reverse=True)
+    elif opcao == "5":
+        return
+    else:
+        print("Opção inválida!")
+        return
+
+    # Mostrar relatório
+    print("\nClientes com dívida:\n")
+    print("-" * 70)
+    print(f"{'CPF':<15}| {'Nome':<20}| {'Saldo Devedor (R$)':>15}")
+    print("-" * 70)
+    for cpf, dados in ordenados:
+        print(f"{cpf:<15}| {dados['nome']:<20}| {dados['saldo_devedor']:>15.2f}")
+    print("-" * 70)
+
+    input("\nPressione ENTER para continuar...")
+    limpar_terminal()
 
