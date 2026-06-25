@@ -4,18 +4,20 @@ CriarArquivos()
 from usuarios import ModuloClientes
 from estoque import ModuloEstoque
 from vendas import ModuloVendas
-from time import sleep
 
 
 def Home():
     while True:
         limpar_terminal()
         print("""
-    =========-HOME-=========
+    ============================
+                HOME
+    ============================
         1 - Gerir Clientes
         2 - Gerir Estoque
         3 - Gerir Vendas
-    ========================
+        4 - Sair do Sistema
+    ============================
         """)
 
         modulo = input("qual modulo você deseja acessar ? :")
@@ -31,7 +33,13 @@ def Home():
 
         elif modulo == '3':
             limpar_terminal(0.2)
-            ModuloVendas()            
+            ModuloVendas() 
+
+        elif modulo == '4':
+            limpar_terminal()
+            print("Saindo do Sistema...")
+            limpar_terminal(1)
+            break           
 
         else:
             limpar_terminal()

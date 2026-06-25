@@ -1,63 +1,135 @@
 {
-    "12": {
-        "nome": "12",
-        "email": "12",
-        "telefone": "12",
-        "cpf": "12",
+    "11111111111": {
+        "nome": "Ana Souza",
+        "email": "ana.souza@email.com",
+        "telefone": "(11) 98888-1111",
+        "cpf": "11111111111",
+        "compras": 0,
+        "saldo_devedor": 13999.8,
+        "habilitado": true
+    },
+    "22222222222": {
+        "nome": "Bruno Lima",
+        "email": "bruno.lima@email.com",
+        "telefone": "(21) 97777-2222",
+        "cpf": "22222222222",
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true
     },
-    "13": {
-        "nome": "13",
-        "email": "13",
-        "telefone": "13",
-        "cpf": "13",
+    "33333333333": {
+        "nome": "Carla Mendes",
+        "email": "carla.mendes@email.com",
+        "telefone": "(31) 96666-3333",
+        "cpf": "33333333333",
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true
     },
-    "33": {
-        "nome": "33",
-        "email": "33",
-        "telefone": "33",
-        "cpf": "33",
+    "44444444444": {
+        "nome": "Diego Santos",
+        "email": "diego.santos@email.com",
+        "telefone": "(41) 95555-4444",
+        "cpf": "44444444444",
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true
     },
-    "222": {
-        "nome": "222",
-        "email": "222",
-        "telefone": "222",
-        "cpf": "222",
+    "55555555555": {
+        "nome": "Eduarda Alves",
+        "email": "eduarda.alves@email.com",
+        "telefone": "(51) 94444-5555",
+        "cpf": "55555555555",
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true
     },
-    "4": {
-        "nome": "4",
-        "email": "4",
-        "telefone": "4",
-        "cpf": "4",
+    "66666666666": {
+        "nome": "Felipe Costa",
+        "email": "felipe.costa@email.com",
+        "telefone": "(61) 93333-6666",
+        "cpf": "66666666666",
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true
     },
-    "89": {
-        "nome": "89",
-        "email": "89",
-        "telefone": "89",
-        "cpf": "89",
+    "77777777777": {
+        "nome": "Gabriela Rocha",
+        "email": "gabriela.rocha@email.com",
+        "telefone": "(71) 92222-7777",
+        "cpf": "77777777777",
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true
     },
-    "123.456.789-01": {
-        "nome": "davi guedes",
-        "email": "davi@gmail.com",
-        "telefone": "(84) 9000-1111",
-        "cpf": "123.456.789-01",
+    "88888888888": {
+        "nome": "Henrique Martins",
+        "email": "henrique.martins@email.com",
+        "telefone": "(81) 91111-8888",
+        "cpf": "88888888888",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
+    },
+    "99999999999": {
+        "nome": "Isabela Ferreira",
+        "email": "isabela.ferreira@email.com",
+        "telefone": "(91) 90000-9999",
+        "cpf": "99999999999",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
+    },
+    "10101010101": {
+        "nome": "João Pedro",
+        "email": "joao.pedro@email.com",
+        "telefone": "(85) 98888-1010",
+        "cpf": "10101010101",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
+    },
+    "12121212121": {
+        "nome": "Karina Oliveira",
+        "email": "karina.oliveira@email.com",
+        "telefone": "(82) 97777-1212",
+        "cpf": "12121212121",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
+    },
+    "13131313131": {
+        "nome": "Lucas Ribeiro",
+        "email": "lucas.ribeiro@email.com",
+        "telefone": "(83) 96666-1313",
+        "cpf": "13131313131",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
+    },
+    "14141414141": {
+        "nome": "Mariana Gomes",
+        "email": "mariana.gomes@email.com",
+        "telefone": "(84) 95555-1414",
+        "cpf": "14141414141",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
+    },
+    "15151515151": {
+        "nome": "Nicolas Duarte",
+        "email": "nicolas.duarte@email.com",
+        "telefone": "(86) 94444-1515",
+        "cpf": "15151515151",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
+    },
+    "16161616161": {
+        "nome": "Olivia Barros",
+        "email": "olivia.barros@email.com",
+        "telefone": "(87) 93333-1616",
+        "cpf": "16161616161",
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true

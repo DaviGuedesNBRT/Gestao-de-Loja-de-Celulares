@@ -12,15 +12,17 @@ with open("banco/clientes.json", "r", encoding="utf-8") as arquivo:
 def ModuloClientes():
     while True:
         print("""
-            =======================
-            1 - Cadastrar Cliente
-            2 - Editar Cliente
-            3 - visualizar Cliente
-            4 - Visualizar Clientes
-            5 - Excluir Cliente
-            6 - Rehabilitar Cliente
-            7 - Voltar Para O Menu Principal
-            =======================
+            =========================================
+                            CLIENTES
+            =========================================
+                1 - Cadastrar Cliente
+                2 - Editar Cliente
+                3 - visualizar Cliente
+                4 - Visualizar Clientes
+                5 - Excluir Cliente
+                6 - Rehabilitar Cliente
+                7 - Voltar Para O Menu Principal
+            =========================================
             """)
         print()
         
@@ -102,15 +104,17 @@ def ProcessarCliente(excluir=False, atualizar=False, rehabilitar=False):
     
     while True:
         print(f"""
-            =======================
-            De Qual Forma Você Deseja Buscar O Cliente {
+            ================================
+                De Qual Forma Você Deseja 
+            Buscar O Cliente {
                 'Para Exclusão' if excluir else 'Para Atualização' if atualizar else 'Para Reabilitar' if rehabilitar else ''
             } ?
-            1 - Buscar Por Nome
-            2 - Buscar Por CPF
-            3 - Buscar Por Telefone
-            4 - Menu De Clientes
-            =======================
+            ================================
+                1 - Buscar Por Nome
+                2 - Buscar Por CPF
+                3 - Buscar Por Telefone
+                4 - Menu De Clientes
+            ================================
         """)
 
         visualizar_cliente = input("Digite A Opção Desejada: ")
@@ -130,7 +134,7 @@ def ProcessarCliente(excluir=False, atualizar=False, rehabilitar=False):
             nome_cliente = input("Digite O Nome Do Cliente: ").strip()
             limpar_terminal()
             for cpf, dados in clientes.items():
-                if nome_cliente.lower() == dados["nome"].lower():
+                if nome_cliente.lower() in dados["nome"].lower():
                     if rehabilitar and not dados["habilitado"]:
                         clientes_encontrados[cpf] = dados
                     elif not rehabilitar and dados["habilitado"]:
@@ -158,7 +162,11 @@ def ProcessarCliente(excluir=False, atualizar=False, rehabilitar=False):
 
         if clientes_encontrados:
             print(f"Foram Encontrados {len(clientes_encontrados)} Resultados De Busca:")
+            print(f"\n{'CPF':<15} | {'Nome':<20} | {'Email':<25} | {'Telefone':<15} | {'Saldo Devedor (R$)':>18}")
+            print("-" * 100)
             for cpf, dados in clientes_encontrados.items():
+                print(f"{cpf:<15} | {dados['nome']:<20} | {dados['email']:<25} | {dados['telefone']:<15} | {dados['saldo_devedor']:>18.2f}")
+
                 print(f"\nCPF: {cpf} - Nome: {dados['nome']} - Email: {dados['email']} - Telefone: {dados['telefone']} - Saldo Devedor: R${dados['saldo_devedor']:.2f}")
             
             if not excluir and not atualizar and not rehabilitar:
@@ -224,17 +232,17 @@ def VisualizarClientes():
         print("Nenhum cliente cadastrado no sistema.")
     else:
         # Cabeçalho da tabela
-        print("=" * 100)
-        print(f"{'ID':<5}| {'Nome':<20}| {'Email':<25}| {'Telefone':<12}| {'CPF':<12}| {'Saldo Devedor':>15}")
-        print("-" * 100)
+        print("=" * 110)
+        print(f"{'ID':<5}| {'Nome':<20}| {'Email':<25}| {'Telefone':<17}| {'CPF':<17}| {'Saldo Devedor':>15}")
+        print("-" * 110)
 
         # Linhas de dados (ID baseado no índice da iteração)
         for idx, (cpf, dados) in enumerate(clientes.items(), start=1):
             if dados["habilitado"]:
                 print(f"{idx:<5}| {dados['nome']:<20}| {dados['email']:<25}| "
-                      f"{dados['telefone']:<12}| {cpf:<12}| R$ {dados['saldo_devedor']:>12.2f}")
+                      f"{dados['telefone']:<17}| {cpf:<17}| R$ {dados['saldo_devedor']:>12.2f}")
         
-        print("=" * 100)
+        print("=" * 110)
 
     input("\nPressione Enter para voltar ao Menu...")
     limpar_terminal()

@@ -211,6 +211,7 @@ def VisualizarVendas():
             vendas_filtradas = {}
 
         elif opcao == "4":
+            limpar_terminal()
             break
         else:
             print("Opção inválida, tente novamente.")
@@ -260,6 +261,7 @@ def RelatorioFinanceiro():
         elif opcao == "2":
             relatorio_dividas()
         elif opcao == "3":
+            limpar_terminal()
             break
         else:
             print("Opção inválida!")
@@ -287,8 +289,9 @@ def relatorio_faturamento():
     limpar_terminal()
 
     if opcao == "6":
+        limpar_terminal()
         return
-
+        
     # Definir intervalo
     if opcao == "1":
         inicio = hoje - timedelta(days=730)
@@ -355,6 +358,7 @@ def relatorio_dividas():
     elif opcao == "4":
         ordenados = sorted(clientes_endividados.items(), key=lambda x: datetime.fromisoformat(x[1].get("data_divida", datetime.today().isoformat())), reverse=True)
     elif opcao == "5":
+        limpar_terminal()
         return
     else:
         print("Opção inválida!")

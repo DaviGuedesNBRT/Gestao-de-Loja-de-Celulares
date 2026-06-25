@@ -1,128 +1,14 @@
 {
     "1": {
-        "cpf_cliente": "12",
-        "valor_venda": 7200.0,
-        "forma_pagamento": "Pix",
-        "tipo_venda": "Venda de produto",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": [
-            {
-                "id": "2",
-                "quantidade": 1,
-                "preco_unitario": 7200.0
-            }
-        ]
-    },
-    "2": {
-        "cpf_cliente": "33",
-        "valor_venda": 7200.0,
+        "cpf_cliente": "11111111111",
+        "valor_venda": 13999.8,
         "forma_pagamento": "A Prazo",
         "tipo_venda": "Venda a Prazo (Dívida)",
-        "data": "2026-06-20",
+        "data": "2026-06-25",
         "ID_produtos_vendidos": [
             {
-                "id": "2",
-                "quantidade": 1,
-                "preco_unitario": 7200.0
-            }
-        ]
-    },
-    "3": {
-        "cpf_cliente": "3",
-        "valor_venda": 4500.0,
-        "forma_pagamento": "Parcelado",
-        "tipo_venda": "Venda de produto",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": [
-            {
-                "id": "5",
-                "quantidade": 1,
-                "preco_unitario": 4500.0
-            }
-        ]
-    },
-    "4": {
-        "cpf_cliente": "33",
-        "valor_venda": 3600.0,
-        "forma_pagamento": "A Prazo",
-        "tipo_venda": "Venda a Prazo (Dívida)",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": [
-            {
-                "id": "3",
+                "id": "1",
                 "quantidade": 2,
-                "preco_unitario": 1800.0
-            }
-        ]
-    },
-    "5": {
-        "cpf_cliente": "33",
-        "valor_venda": 6500.0,
-        "forma_pagamento": "Pix",
-        "tipo_venda": "Venda de produto",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": [
-            {
-                "id": "1",
-                "quantidade": 1,
-                "preco_unitario": 6500.0
-            }
-        ]
-    },
-    "6": {
-        "cpf_cliente": "5",
-        "valor_venda": 6999.9,
-        "forma_pagamento": "Pix",
-        "tipo_venda": "Venda De Produto",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": [
-            {
-                "id": "1",
-                "quantidade": 1,
-                "preco_unitario": 6999.9
-            }
-        ]
-    },
-    "7": {
-        "cpf_cliente": "12",
-        "valor_venda": 5529.0,
-        "forma_pagamento": "Pix",
-        "tipo_venda": "Pagamento de Dívida",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": []
-    },
-    "8": {
-        "cpf_cliente": "12",
-        "valor_venda": 3428814.0,
-        "forma_pagamento": "Pix",
-        "tipo_venda": "Pagamento de Dívida",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": []
-    },
-    "9": {
-        "cpf_cliente": "89",
-        "valor_venda": 6999.9,
-        "forma_pagamento": "Pix",
-        "tipo_venda": "Venda de produto",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": [
-            {
-                "id": "1",
-                "quantidade": 1,
-                "preco_unitario": 6999.9
-            }
-        ]
-    },
-    "10": {
-        "cpf_cliente": "89",
-        "valor_venda": 6999.9,
-        "forma_pagamento": "Pix",
-        "tipo_venda": "Venda de produto",
-        "data": "2026-06-20",
-        "ID_produtos_vendidos": [
-            {
-                "id": "1",
-                "quantidade": 1,
                 "preco_unitario": 6999.9
             }
         ]
