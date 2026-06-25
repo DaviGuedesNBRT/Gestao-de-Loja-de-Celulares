@@ -1,7 +1,7 @@
 import os
 import json
 import time
-from ultils import limpar_terminal, atualizar_arquivos, validar_formatar_cpf, validar_formatar_telefone
+from ultils import limpar_terminal, atualizar_arquivos, validar_formatar_cpf, validar_formatar_telefone, validar_email
 
 clientes = {}
 
@@ -61,6 +61,7 @@ def ModuloClientes():
 def CadastrarCliente():
     global clientes 
     
+    #valida e formata cpf
     while True:
         try:
             cpf = validar_formatar_cpf(input("Digite O CPF Do Cliente: ").strip())
@@ -74,8 +75,16 @@ def CadastrarCliente():
         break
 
     nome = input("Digite O Nome Do Cliente: ").strip()
-    email = input("Digite O Email Do Cliente: ").strip()
 
+    # valida email
+    while True:
+        email = input("Digite O Email Do Cliente: ").strip()
+        if validar_email(email):
+            break
+        else:
+            print("Email inválido. O formato deve ser algo@dominio.com")
+
+    #valida e formata telefone
     while True:
         try:
             telefone = validar_formatar_telefone(input("Digite O Telefone Do Cliente: ").strip())

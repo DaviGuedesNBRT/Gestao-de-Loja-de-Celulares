@@ -193,3 +193,16 @@ def validar_formatar_telefone(telefone: str) -> str:
         return f"({ddd}) {telefone[2:6]}-{telefone[6:]}"
     else:  # 11 dígitos → celular
         return f"({ddd}) {telefone[2:7]}-{telefone[7:]}"
+
+def validar_email(email: str) -> bool:
+    """
+    Retorna True se o email for válido.
+    Regras:
+    - Deve conter '@'
+    - Deve conter '.' após o '@'
+    """
+    if "@" in email:
+        parte_local, parte_dominio = email.split("@", 1)
+        if "." in parte_dominio:
+            return True
+    return False
