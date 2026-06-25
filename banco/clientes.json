@@ -52,5 +52,14 @@
         "compras": 0,
         "saldo_devedor": 0.0,
         "habilitado": true
+    },
+    "123.456.789-01": {
+        "nome": "davi guedes",
+        "email": "davi@gmail.com",
+        "telefone": "(84) 9000-1111",
+        "cpf": "123.456.789-01",
+        "compras": 0,
+        "saldo_devedor": 0.0,
+        "habilitado": true
     }
 }

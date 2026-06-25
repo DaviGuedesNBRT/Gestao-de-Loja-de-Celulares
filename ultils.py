@@ -150,22 +150,46 @@ def RealizarVenda(venda_realizada=False, pagamento=0.0, cpf_cliente='', vendas={
         limpar_terminal()
         return True
 
-def mostrar_vendas(vendas_filtradas):
+def mostrar_vendas(vendas_filtradas,clientes):
     if not vendas_filtradas:
         print("Nenhuma venda encontrada.")
         sleep(2)
         limpar_terminal()
         return
 
-    print(f"\nForam encontradas {len(vendas_filtradas)} vendas:\n")
-    print("-" * 90)
-    print(f"{'ID':<5}| {'CPF Cliente':<15}| {'Valor (R$)':>10}| {'Forma':<15}| {'Data':<12}| {'Tipo':<20}")
-    print("-" * 90)
+    print(f"{'ID':<5}| {'CPF Cliente':<15}| {'Nome Cliente':<20}| {'Valor (R$)':>10}| {'Forma':<15}| {'Data':<12}| {'Tipo':<20}")
+    print("-" * 120)
 
     for id_venda, dados in vendas_filtradas.items():
-        print(f"{id_venda:<5}| {dados['cpf_cliente']:<15}| {dados['valor_venda']:>10.2f}| "
-              f"{dados['forma_pagamento']:<15}| {dados['data']:<12}| {dados['tipo_venda']:<20}")
+        cpf = dados['cpf_cliente']
+        nome_cliente = clientes.get(cpf, {}).get("nome", "N/D")  # busca no dicionário de clientes
+        print(f"{id_venda:<5}| {cpf:<15}| {nome_cliente:<20}| "
+            f"{dados['valor_venda']:>10.2f}| {dados['forma_pagamento']:<15}| {dados['data']:<12}| {dados['tipo_venda']:<20}")
 
-    print("-" * 90)
+    print("-" * 120)
     input("\nPressione ENTER para continuar...")
     limpar_terminal()
+
+def validar_formatar_cpf(cpf: str) -> str:
+    """
+    Valida se o CPF tem 11 dígitos numéricos e retorna formatado: XXX.XXX.XXX-XX
+    """
+    cpf = ''.join(filter(str.isdigit, cpf))  # remove tudo que não for número
+    if len(cpf) != 11:
+        raise ValueError("CPF inválido. Deve conter 11 dígitos numéricos.")
+    return f"{cpf[:3]}.{cpf[3:6]}.{cpf[6:9]}-{cpf[9:]}"
+
+
+def validar_formatar_telefone(telefone: str) -> str:
+    """
+    Valida se o telefone tem entre 10 e 11 dígitos e retorna formatado: (XX) XXXXX-XXXX
+    """
+    telefone = ''.join(filter(str.isdigit, telefone))
+    if len(telefone) not in (10, 11):
+        raise ValueError("Telefone inválido. Deve conter 10 ou 11 dígitos numéricos.")
+
+    ddd = telefone[:2]
+    if len(telefone) == 10:
+        return f"({ddd}) {telefone[2:6]}-{telefone[6:]}"
+    else:  # 11 dígitos → celular
+        return f"({ddd}) {telefone[2:7]}-{telefone[7:]}"

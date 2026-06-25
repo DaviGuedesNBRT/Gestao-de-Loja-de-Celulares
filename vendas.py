@@ -166,7 +166,7 @@ def EfetuarVenda():
                 )
           
 def VisualizarVendas():
-    global vendas
+    global vendas, clientes
 
     while True:
         print("""
@@ -183,7 +183,9 @@ def VisualizarVendas():
 
         if opcao == "1":
             limpar_terminal()
-            mostrar_vendas(vendas_filtradas)
+            vendas_filtradas = vendas
+            mostrar_vendas(vendas_filtradas=vendas_filtradas, clientes=clientes)
+            vendas_filtradas = {}
 
         elif opcao == "2":
             hoje = datetime.today().date()
@@ -194,7 +196,8 @@ def VisualizarVendas():
             }
 
             limpar_terminal()
-            mostrar_vendas(vendas_filtradas)
+            mostrar_vendas(vendas_filtradas=vendas_filtradas, clientes=clientes)
+            vendas_filtradas = {}
 
         elif opcao == "3":
             hoje = datetime.today().date()
@@ -204,7 +207,8 @@ def VisualizarVendas():
                 if datetime.fromisoformat(dados["data"]).date() >= ultima_semana
             }
             limpar_terminal()
-            mostrar_vendas(vendas_filtradas)
+            mostrar_vendas(vendas_filtradas=vendas_filtradas, clientes=clientes)
+            vendas_filtradas = {}
 
         elif opcao == "4":
             break

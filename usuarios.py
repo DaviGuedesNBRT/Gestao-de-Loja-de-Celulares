@@ -1,7 +1,7 @@
 import os
 import json
 import time
-from ultils import limpar_terminal, atualizar_arquivos
+from ultils import limpar_terminal, atualizar_arquivos, validar_formatar_cpf, validar_formatar_telefone
 
 clientes = {}
 
@@ -60,7 +60,12 @@ def CadastrarCliente():
     global clientes 
     
     while True:
-        cpf = input("Digite O CPF Do Cliente: ").strip()
+        try:
+            cpf = validar_formatar_cpf(input("Digite O CPF Do Cliente: ").strip())
+        except ValueError as e:
+            print(e)
+            continue
+
         if cpf in clientes:
             print("CPF Já Cadastrado. Por Favor, Insira Um CPF Diferente.")
             continue
@@ -68,8 +73,14 @@ def CadastrarCliente():
 
     nome = input("Digite O Nome Do Cliente: ").strip()
     email = input("Digite O Email Do Cliente: ").strip()
-    telefone = input("Digite O Telefone Do Cliente: ").strip()        
-    
+
+    while True:
+        try:
+            telefone = validar_formatar_telefone(input("Digite O Telefone Do Cliente: ").strip())
+            break
+        except ValueError as e:
+            print(e)
+
     dados = {
         "nome": nome,
         "email": email,
@@ -80,8 +91,7 @@ def CadastrarCliente():
         "habilitado": True,
     }
 
-    clientes[cpf] = dados  # CPF é a chave
-
+    clientes[cpf] = dados
     atualizar_arquivos(clientes=clientes)
     print("Cliente Cadastrado Com Sucesso!")
     limpar_terminal(1)
